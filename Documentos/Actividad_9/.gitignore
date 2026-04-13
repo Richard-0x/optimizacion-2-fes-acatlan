@@ -1,0 +1,15 @@
+# LaTeX
+.aux
+.fdb_latexmk
+.fls
+.log
+.synctex.gz
+.toc
+.build
+.out
+.auxlock
+.build-tikz
+
+# OS
+.DS_Store
+.Thumbs.db
