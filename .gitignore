@@ -9,7 +9,5 @@
 .out
 .auxlock
 .build-tikz
-
-# OS
 .DS_Store
 .Thumbs.db

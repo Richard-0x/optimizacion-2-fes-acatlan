@@ -1,0 +1,834 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+%--------------------------------------------------------------------------------
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% ---------------------------------------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+    
+
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textbf{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Redes de Optimización Flujo a Costo Mínimo}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+
+% CONTENIDO 
+\section{Problema: Mario Bros. Corporal}
+
+\begin{ejercicio}{Optimización de Producción y Distribución}{prob1}
+Minimizar el costo total (producción + distribución) para satisfacer la demanda anual. Posteriormente, ajustar el modelo si el Reino Bowser tiene una capacidad máxima de tránsito de 200 unidades.
+\end{ejercicio}
+
+\subsection*{Problema}
+
+El problema se modela como una \textbf{Red de Flujo a Costo Mínimo}. 
+Tenemos nodos de oferta (Mundo Desierto y Reino de los Pingüinos), 
+nodos de demanda (Cascadas Doradas y Fortaleza de Piedra), 
+y un nodo de transbordo puro (Reino Bowser). 
+
+La oferta total es exactamente igual a la demanda total 
+($400 + 300 = 700$), el sistema está balanceado. 
+Para modelar la indicación de minimizar el costo de 
+\textit{``producción + distribución''}, debemos 
+\textbf{sumar el costo de producción al costo de 
+transporte de los arcos que salen de las fábricas}. 
+Esto integra ambos costos en una sola variable $C_{ij}$.
+
+\begin{itemize}
+    \item \textbf{Costo desde Mundo Desierto (MD - Produce a \$800):}
+    \begin{itemize}
+        \item Hacia Reino Bowser (RB): $800 + 80 = \$880$
+        \item Hacia Cascadas Doradas (CD): $800 + 220 = \$1020$
+        \item Hacia Fortaleza de Piedra (FP): $800 + 280 = \$1080$
+    \end{itemize}
+    \item \textbf{Costo desde Reino Pingüinos (RP - Produce a \$900):}
+    \begin{itemize}
+        \item Hacia Reino Bowser (RB): $900 + 100 = \$1000$
+        \item Hacia Cascadas Doradas (CD): $900 + 140 = \$1040$
+        \item Hacia Fortaleza de Piedra (FP): $900 + 170 = \$1070$
+    \end{itemize}
+\end{itemize}
+
+\subsection{representación de la red}
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={circle, draw, minimum size=1cm, font=\sffamily\small\bfseries},
+    supply/.style={fill=cyan!20},
+    demand/.style={fill=red!20},
+    trans/.style={fill=yellow!20},
+    edge/.style={->, >=stealth, thick, color=gray!80!black}
+]
+
+% Nodos
+\node[supply, label=left:{[+400]}] (1) at (0, 3) {MD};
+\node[supply, label=left:{[+300]}] (2) at (0, -1) {RP};
+\node[trans, label=above:{[0]}] (3) at (4, 1) {RB};
+\node[demand, label=right:{[-300]}] (4) at (8, 3) {CD};
+\node[demand, label=right:{[-400]}] (5) at (8, -1) {FP};
+
+% Arcos desde MD
+\draw[edge] (1) -- node[above right, draw=none, fill=white, inner sep=1pt] {\$880} (3);
+\draw[edge] (1) -- node[above, draw=none, fill=white, inner sep=1pt] {\$1020} (4);
+\draw[edge] (1) -- node[above right, draw=none, fill=white, inner sep=1pt, pos=0.2] {\$1080} (5);
+
+% Arcos desde RP
+\draw[edge] (2) -- node[below right, draw=none, fill=white, inner sep=1pt] {\$1000} (3);
+\draw[edge] (2) -- node[below right, draw=none, fill=white, inner sep=1pt, pos=0.2] {\$1040} (4);
+\draw[edge] (2) -- node[below, draw=none, fill=white, inner sep=1pt] {\$1070} (5);
+
+% Arcos desde RB
+\draw[edge] (3) -- node[above left, draw=none, fill=white, inner sep=1pt] {\$40} (4);
+\draw[edge] (3) -- node[below left, draw=none, fill=white, inner sep=1pt] {\$50} (5);
+
+\end{tikzpicture}
+\end{center}
+
+Minimizar $Z = \sum C_{ij} x_{ij}$ sujeto a la conservación 
+de flujo $\sum x_{ij} - \sum x_{ki} = b_i$ para todo 
+nodo $i$, y $x_{ij} \ge 0$. 
+Donde $b = [400, 300, 0, -300, -400]$.
+
+\subsection{Nuevas restricciones}
+
+Limitar el flujo a través del Reino Bowser a un 
+máximo de 200 unidades, aplicamos la técnica de 
+\textbf{desdoblamiento de nodos}. 
+Dividimos el nodo RB en dos: RB$_1$ (Entrada) y 
+RB$_2$ (Salida), unidos por un arco dirigido con costo 
+\$0 y capacidad $u = 200$.
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={circle, draw, minimum size=1cm, font=\sffamily\small\bfseries},
+    supply/.style={fill=cyan!20},
+    demand/.style={fill=red!20},
+    trans/.style={fill=yellow!20},
+    edge/.style={->, >=stealth, thick, color=gray!80!black},
+    capedge/.style={->, >=stealth, ultra thick, color=blue}
+]
+
+% Nodos
+\node[supply, label=left:{[+400]}] (1) at (0, 3) {MD};
+\node[supply, label=left:{[+300]}] (2) at (0, -1) {RP};
+\node[trans] (3a) at (3.5, 1) {RB$_1$};
+\node[trans] (3b) at (5.5, 1) {RB$_2$};
+\node[demand, label=right:{[-300]}] (4) at (9, 3) {CD};
+\node[demand, label=right:{[-400]}] (5) at (9, -1) {FP};
+
+% Arcos modificados
+\draw[edge] (1) -- node[above right, draw=none, fill=white, inner sep=1pt] {\$880} (3a);
+\draw[edge] (2) -- node[below right, draw=none, fill=white, inner sep=1pt] {\$1000} (3a);
+
+% Arco de capacidad
+\draw[capedge] (3a) -- node[above, draw=none, text=blue] {$u=200$} node[below, draw=none, text=blue] {\$0} (3b);
+
+\draw[edge] (3b) -- node[above left, draw=none, fill=white, inner sep=1pt] {\$40} (4);
+\draw[edge] (3b) -- node[below left, draw=none, fill=white, inner sep=1pt] {\$50} (5);
+
+% Arcos directos
+\draw[edge] (1) to[bend left=15] node[above, draw=none, fill=white, inner sep=1pt] {\$1020} (4);
+\draw[edge] (1) -- node[above right, draw=none, fill=white, inner sep=1pt, pos=0.25] {\$1080} (5);
+\draw[edge] (2) -- node[below right, draw=none, fill=white, inner sep=1pt, pos=0.25] {\$1040} (4);
+\draw[edge] (2) to[bend right=15] node[below, draw=none, fill=white, inner sep=1pt] {\$1070} (5);
+
+\end{tikzpicture}
+\end{center}
+
+\subsection{Métodos}
+
+Costo mínimo en redes no capacitadas, 
+determinamos las \textbf{rutas más cortas} desde las 
+fábricas hasta los destinos evaluando todos los 
+caminos posibles.
+
+\textbf{Solución del Inciso 1 (Red Original sin restricciones):}
+\begin{itemize}
+    \item Ruta MD $\to$ RB $\to$ CD cuesta \$920. Ruta directa MD $\to$ CD cuesta \$1020. (Gana RB por \$100).
+    \item Ruta MD $\to$ RB $\to$ FP cuesta \$930. Ruta directa MD $\to$ FP cuesta \$1080. (Gana RB por \$150).
+    \item Ruta RP $\to$ RB $\to$ CD cuesta \$1040. Ruta directa RP $\to$ CD cuesta \$1040. (Empate).
+    \item Ruta RP $\to$ RB $\to$ FP cuesta \$1050. Ruta directa RP $\to$ FP cuesta \$1070. (Gana RB por \$20).
+\end{itemize}
+
+El nodo RB ofrece las rutas más baratas para todo, 
+enviamos todo el flujo posible a través de él.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccccc}
+\hline
+\textbf{Ruta} & \textbf{Flujo Asignado} & \textbf{Costo Unitario} & \textbf{Costo Parcial} \\
+\hline
+MD $\to$ RB & 400 & \$880 & \$352,000 \\
+RP $\to$ RB & 300 & \$1000 & \$300,000 \\
+RB $\to$ FP & 400 & \$50 & \$20,000 \\
+RB $\to$ CD & 300 & \$40 & \$12,000 \\
+\hline
+\textbf{Total} & \textbf{700} & & \textbf{\$684,000} \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Solución (Red Capacitada a 200 unidades en RB):}
+
+Dado que RB solo puede procesar 200 unidades, debemos priorizar la ruta 
+que genere el \textbf{mayor ahorro}. 
+Como calculamos antes, la ruta MD $\to$ RB $\to$ FP 
+ofrece el máximo ahorro 
+(\$150/unidad frente a la ruta directa).
+Asignamos los 200 de capacidad de RB a la ruta
+ MD $\to$ FP. Las 500 unidades restantes 
+ (200 de MD y 300 de RP) deben viajar directo. 
+
+Evaluamos la forma más barata de satisfacer la demanda restante (300 en CD, 200 en FP):
+\begin{itemize}
+    \item MD $\to$ CD cuesta \$1020, RP $\to$ FP cuesta \$1070 (Suma: \$2090).
+    \item MD $\to$ FP cuesta \$1080, RP $\to$ CD cuesta \$1040 (Suma: \$2120).
+\end{itemize}
+La asignación óptima es enviar el sobrante de MD hacia CD, y utilizar a RP para completar el resto.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccccc}
+\hline
+\textbf{Ruta} & \textbf{Flujo Asignado} & \textbf{Costo Unitario} & \textbf{Costo Parcial} \\
+\hline
+MD $\to$ RB $\to$ FP & 200 & \$930 & \$186,000 \\
+MD $\to$ CD (Directo) & 200 & \$1020 & \$204,000 \\
+RP $\to$ CD (Directo) & 100 & \$1040 & \$104,000 \\
+RP $\to$ FP (Directo) & 200 & \$1070 & \$214,000 \\
+\hline
+\textbf{Total} & \textbf{700} & & \textbf{\$708,000} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{alerta}{}
+cuello de botella de 200 unidades en el Reino Bowser 
+obliga a utilizar rutas de transporte directas y 
+subóptimas, lo que incrementa el costo operativo de 
+la empresa de \textbf{\$684,000} a 
+\textbf{\$708,000 dólares anuales} 
+(un sobrecosto de \$24,000). 
+\end{alerta}
+
+\newpage
+
+\section{Método de Circuitos Negativos}
+
+\begin{ejercicio}{Red con flujo $v=10$}{a}
+Resolver el problema de la red dada usando el método de circuitos negativos, asegurando mostrar un mínimo de tres iteraciones.
+\end{ejercicio}
+
+Para forzar al algoritmo a realizar tres iteraciones, 
+propondremos un \textbf{flujo inicial factible ($v=10$) 
+intencionalmente ineficiente}, enviando flujos cruzados 
+entre los nodos 2 y 3.
+
+\subsection{Estado Inicial}
+\begin{itemize}
+    \item Ruta $1 \to 2 \to 3 \to 4$: Enviamos 5 unidades.
+    \item Ruta $1 \to 3 \to 2 \to 4$: Enviamos 5 unidades.
+\end{itemize}
+
+\textbf{Flujos actuales ($f_{ij}$):} $f_{12}=5, f_{13}=5, f_{23}=5, f_{32}=5, f_{24}=5, f_{34}=5$.
+
+\vspace{1mm}
+
+\textbf{Costo Total Inicial:} $5(4) + 5(3) + 5(1) + 5(2) + 5(3) + 5(6) = \mathbf{95}$.
+
+\vspace{1mm}
+
+\subsection{Iteración 1}
+
+\vspace{1mm}
+
+La Red Residual ($G_f$). Un arco inverso tiene costo 
+$-c_{ij}$ y capacidad igual al flujo actual $f_{ij}$.
+
+Detectamos el \textbf{circuito negativo} 
+formado por los arcos inversos de los flujos cruzados:
+
+\begin{itemize}
+    \item Ruta del circuito: $2 \to 3 \to 2$.
+    \item Usamos arco inverso $(2,3)$ proveniente de $f_{32}$: costo $-2$, capacidad $5$.
+    \item Usamos arco inverso $(3,2)$ proveniente de $f_{23}$: costo $-1$, capacidad $5$.
+    \item \textbf{Costo del ciclo:} $-2 - 1 = \mathbf{-3}$.
+    \item \textbf{Capacidad a aumentar ($\Delta$):} $\min(5, 5) = \mathbf{5}$.
+\end{itemize}
+
+\vspace{1mm}
+
+\textbf{Actualización:} Restamos 5 a $f_{32}$ y 5 a $f_{23}$. Ambos flujos cruzados se cancelan a 0. 
+
+\vspace{1mm}
+
+\textbf{Nuevos flujos:} $f_{12}=5, f_{13}=5, f_{24}=5, f_{34}=5$. 
+
+\vspace{1mm}
+
+\textbf{Nuevo Costo:} $95 + 5(-3) = \mathbf{80}$.
+
+\subsection{Iteración 2}
+
+En la nueva Red Residual ($G_f$), buscamos otro circuito negativo:
+
+
+\begin{itemize}
+    \item Circuito: $3 \to 1 \to 2 \to 4 \to 3$.
+    \item Arco inverso $(3,1)$: costo $-3$, capacidad $5$.
+    \item Arco directo $(1,2)$: costo $4$, capacidad libre $7-5 = 2$.
+    \item Arco directo $(2,4)$: costo $3$, capacidad libre $8-5 = 3$.
+    \item Arco inverso $(4,3)$: costo $-6$, capacidad $5$.
+    \item \textbf{Costo del ciclo:} $-3 + 4 + 3 - 6 = \mathbf{-2}$.
+    \item \textbf{Capacidad a aumentar ($\Delta$):} $\min(5, 2, 3, 5) = \mathbf{2}$.
+\end{itemize}
+
+\vspace{1mm}
+
+\textbf{Actualización:} $f_{13}$ baja a 3, $f_{12}$ sube a 7, $f_{24}$ sube a 7, $f_{34}$ baja a 3. \\
+
+\vspace{1mm}
+
+\textbf{Nuevos flujos:} $f_{12}=7, f_{13}=3, f_{24}=7, f_{34}=3$. \\
+
+\vspace{1mm}
+
+\textbf{Nuevo Costo:} $80 + 2(-2) = \mathbf{76}$.
+
+\subsection{Iteración 3}
+
+\vspace{1mm}
+
+La última Red Residual ($G_f$) y buscamos el circuito:
+
+\begin{itemize}
+    \item Circuito: $3 \to 2 \to 4 \to 3$.
+    \item Arco directo $(3,2)$: costo $2$, capacidad libre $6$.
+    \item Arco directo $(2,4)$: costo $3$, capacidad libre $8-7 = 1$.
+    \item Arco inverso $(4,3)$: costo $-6$, capacidad $3$.
+    \item \textbf{Costo del ciclo:} $2 + 3 - 6 = \mathbf{-1}$.
+    \item \textbf{Capacidad a aumentar ($\Delta$):} $\min(6, 1, 3) = \mathbf{1}$.
+\end{itemize}
+
+\vspace{1mm}
+
+\textbf{Actualización:} $f_{32}$ sube a 1, $f_{24}$ sube a 8, $f_{34}$ baja a 2.
+
+\vspace{1mm}
+
+\textbf{Nuevos flujos:} $f_{12}=7, f_{13}=3, f_{32}=1, f_{24}=8, f_{34}=2$. 
+
+\vspace{1mm}
+
+\textbf{Costo Óptimo Final:} $76 + 1(-1) = \mathbf{75}$.
+
+\begin{nota}{Conclusión}
+Al verificar la red residual de la Iteración 3, ya no existen ciclos con costo total negativo. El flujo se ha optimizado por completo a un costo mínimo de 75.
+\end{nota}
+
+\newpage
+
+\section{Problema 2: Bowser S.A.}
+
+Dividiendo las cantidades entre $100,000$ para facilitar 
+la notación (1 unidad = 100,000 estrellas).
+
+\begin{itemize}
+    \item \textbf{Oferta (Nodos Origen):} Cascada Dorada (CD) = 4, Reino Bowser (RB) = 5. (Total Oferta = 9).
+    \item \textbf{Demanda (Nodos Destino):} Isla Yoshi (IY) = 4, Reino Champiñón (RC) = 3. (Total Demanda = 7).
+\end{itemize}
+
+\begin{alerta}{Balanceo de la Red}
+Dado que la Oferta (9) $>$ Demanda (7), la red está \textbf{desbalanceada}. Se debe crear un \textbf{Nodo Ficticio de Demanda (DF)} que absorba el excedente de 2 unidades con un costo de transporte de \$0.
+\end{alerta}
+
+\subsection{Formulación del Modelo}
+
+Los costos de actualización (\$700 en FP y \$900 en RP) se suman a los costos de transporte de los arcos que \textit{entran} 
+a dichos centros para integrar todo en un solo costo de distribución $C_{ij}$.
+Costo(CD $\to$ FP) = $300 + 700 = \$1000$.
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={circle, draw, minimum size=0.9cm, font=\sffamily\small\bfseries},
+    supply/.style={fill=cyan!20},
+    trans/.style={fill=yellow!20},
+    demand/.style={fill=red!20},
+    dummy/.style={fill=gray!20, dashed},
+    edge/.style={->, >=stealth, thick, color=gray!80!black}
+]
+
+% Nodos
+\node[supply, label=left:{[+4]}] (CD) at (0, 2) {CD};
+\node[supply, label=left:{[+5]}] (RB) at (0, -2) {RB};
+
+\node[trans, label=above:{[0]}] (FP) at (4, 2) {FP};
+\node[trans, label=below:{[0]}] (RP) at (4, -2) {RP};
+
+\node[demand, label=right:{[-4]}] (IY) at (8, 2) {IY};
+\node[demand, label=right:{[-3]}] (RC) at (8, -2) {RC};
+\node[dummy, label=right:{[-2]}] (DF) at (8, 0) {DF};
+
+% Arcos Origen -> Transbordo
+\draw[edge] (CD) -- node[above, draw=none] {\$1000} (FP);
+\draw[edge] (CD) -- node[above right, draw=none, pos=0.2] {\$1010} (RP);
+\draw[edge] (RB) -- node[below right, draw=none, pos=0.2] {\$1120} (FP);
+\draw[edge] (RB) -- node[below, draw=none] {\$1000} (RP);
+
+% Arcos Transbordo -> Destino
+\draw[edge] (FP) -- node[above, draw=none] {\$550} (IY);
+\draw[edge] (FP) -- node[above left, draw=none, pos=0.2] {\$450} (RC);
+\draw[edge] (RP) -- node[below left, draw=none, pos=0.2] {\$530} (IY);
+\draw[edge] (RP) -- node[below, draw=none] {\$470} (RC);
+
+% Arcos a Nodo Ficticio
+\draw[edge, dashed] (CD) to[bend left=45] node[above, draw=none] {\$0} (DF);
+\draw[edge, dashed] (RB) to[bend right=45] node[below, draw=none] {\$0} (DF);
+
+\end{tikzpicture}
+\end{center}
+
+\textbf{Modelo de Programación Lineal:}
+
+\begin{align*}
+    \text{Minimizar } Z &= 1000x_{CD,FP} + 1010x_{CD,RP} + 1120x_{RB,FP} + 1000x_{RB,RP} \\
+    &+ 550x_{FP,IY} + 450x_{FP,RC} + 530x_{RP,IY} + 470x_{RP,RC} + 0x_{CD,DF} + 0x_{RB,DF}
+\end{align*}
+
+Sujeto a las restricciones de conservación de flujo para cada nodo:
+$\sum \text{Salidas} - \sum \text{Entradas} = \text{Oferta/Demanda}$.
+
+\subsection{Modelo con Capacidad en Nodos}
+
+Actualización (FP y RP) tiene una capacidad máxima 
+de procesamiento de 500,000 estrellas (5 unidades), 
+los algoritmos estándar de redes fallan porque asumen 
+que los nodos tienen capacidad infinita.
+
+Para solucionarlo, aplicamos el \textbf{Método de Desdoblamiento de Nodos}:
+\begin{enumerate}
+    \item El nodo $FP$ se divide en dos sub-nodos: un nodo de entrada ($FP_E$) y un nodo de salida ($FP_S$).
+    \item Se unen mediante un arco dirigido $(FP_E \to FP_S)$.
+    \item A este nuevo arco interno se le asigna la capacidad máxima exigida: \textbf{$\mu = 5$ unidades}.
+    \item El costo de procesamiento (\$700) se puede asignar a este arco interno, dejando los arcos externos solo con el costo puro de flete.
+    \item Se repite exactamente el mismo proceso para el nodo $RP$, dividiéndolo en $(RP_E \to RP_S)$ con capacidad $\mu = 5$ y costo interno de \$900.
+\end{enumerate}
+
+De esta forma, la restricción física de la instalación se convierte en una restricción estándar de arco, permitiendo que el algoritmo de costo mínimo resuelva la red acatando el "cuello de botella" de 500,000 unidades por centro.
+
+\newpage
+
+
+\section{Problema: Princesa Peach Airlines}
+
+\begin{ejercicio}{Rutas Aéreas y Asignación de Flota}{prob1}
+Formular un modelo de flujo a costo mínimo que permita maximizar las ganancias diarias determinando cuántos aviones deben servir el corredor aéreo y qué vuelos llevar a cabo, considerando un costo fijo diario de \$800 por avión.
+\end{ejercicio}
+
+\subsection{problema y planteamiento}
+
+Transformar un problema de maximización de utilidades en uno de \textbf{flujo a costo mínimo},
+calcular la utilidad neta de cada vuelo 
+($Ingreso - Costo Variable$) y luego 
+\textbf{multiplicar por -1} 
+para tratarlo como un "costo negativo" .
+
+\begin{itemize}
+    \item \textbf{Nodos:} Cada nodo representa un aeropuerto en una hora específica (ej. $CD_{9am}$).
+    \item \textbf{Arcos de Vuelo:} Conectan el nodo de salida con el nodo de llegada. Su costo es el beneficio negativo. Capacidad = 1 (un avión por vuelo).
+    \item \textbf{Arcos de Espera en Tierra:} Conectan un nodo de una ciudad con el nodo cronológicamente siguiente en la misma ciudad (ej. $CD_{9am} \to CD_{10am}$). Su costo es \$0 y su capacidad es infinita.
+    \item \textbf{Arcos de Pernoite:} Conectan el último nodo del día de una ciudad con el primer nodo del día en la misma ciudad (ej. $CD_{7pm} \to CD_{9am}$). Su costo es el costo fijo diario del avión: \textbf{+\$800}.
+\end{itemize}
+
+\subsection{Formulación y representación de la red}
+
+Los "costos" de cada vuelo ($c = -(Ingreso - Costo Variable)$):
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccccc}
+\hline
+\textbf{Origen} & \textbf{Destino} & \textbf{Ingreso} & \textbf{Costo Var.} & \textbf{Costo de Red ($c_{ij}$)} \\
+\hline
+CD 9 a.m. & RB 10 a.m. & \$900 & \$400 & \textbf{-500} \\
+CD 2 p.m. & RB 3 p.m. & \$600 & \$350 & \textbf{-250} \\
+CD 10 a.m. & RP 11 a.m. & \$800 & \$400 & \textbf{-400} \\
+CD 4 p.m. & RP 5 p.m. & \$1200 & \$450 & \textbf{-750} \\
+RB 9 a.m. & CD 10 a.m. & \$1100 & \$400 & \textbf{-700} \\
+RB 3 p.m. & CD 4 p.m. & \$900 & \$350 & \textbf{-550} \\
+RB 10 a.m. & RP 12 p.m. & \$1500 & \$700 & \textbf{-800} \\
+RB 5 p.m. & RP 7 p.m. & \$1800 & \$900 & \textbf{-900} \\
+RP 10 a.m. & CD 11 a.m. & \$900 & \$500 & \textbf{-400} \\
+RP 2 p.m. & CD 3 p.m. & \$800 & \$450 & \textbf{-350} \\
+RP 11 a.m. & RB 1 p.m. & \$1100 & \$600 & \textbf{-500} \\
+RP 3 p.m. & RB 5 p.m. & \$1200 & \$650 & \textbf{-550} \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={font=\sffamily\scriptsize},
+    citynode/.style={circle, draw, fill=blue!10, minimum size=0.6cm, inner sep=1pt},
+    flight/.style={->, >=stealth, thick, color=black},
+    wait/.style={->, >=stealth, dashed, color=gray},
+    night/.style={->, >=stealth, ultra thick, color=red!80!black}
+]
+
+% Eje de tiempo
+\foreach \t/\x in {9/1, 10/2, 11/3, 12/4, 13/5, 14/6, 15/7, 16/8, 17/9, 19/10} {
+    \node[text=gray] at (\x*1.2, 3) {\t h};
+}
+
+% Nodos CD
+\node[citynode] (CD9) at (1.2, 2) {CD};
+\node[citynode] (CD10) at (2.4, 2) {CD};
+\node[citynode] (CD11) at (3.6, 2) {CD};
+\node[citynode] (CD14) at (7.2, 2) {CD};
+\node[citynode] (CD15) at (8.4, 2) {CD};
+\node[citynode] (CD16) at (9.6, 2) {CD};
+\node[citynode] (CD19) at (12, 2) {CD};
+
+% Nodos RB
+\node[citynode] (RB9) at (1.2, 0) {RB};
+\node[citynode] (RB10) at (2.4, 0) {RB};
+\node[citynode] (RB13) at (6.0, 0) {RB};
+\node[citynode] (RB15) at (8.4, 0) {RB};
+\node[citynode] (RB17) at (10.8, 0) {RB};
+\node[citynode] (RB19) at (12, 0) {RB};
+
+% Nodos RP
+\node[citynode] (RP10) at (2.4, -2) {RP};
+\node[citynode] (RP11) at (3.6, -2) {RP};
+\node[citynode] (RP12) at (4.8, -2) {RP};
+\node[citynode] (RP14) at (7.2, -2) {RP};
+\node[citynode] (RP15) at (8.4, -2) {RP};
+\node[citynode] (RP17) at (10.8, -2) {RP};
+\node[citynode] (RP19) at (12, -2) {RP};
+
+% Arcos de Espera (Ejemplos)
+\draw[wait] (CD9) -- (CD10); \draw[wait] (CD10) -- (CD11);
+\draw[wait] (RB9) -- (RB10); \draw[wait] (RP10) -- (RP11);
+
+% Vuelos principales (algunos para claridad)
+\draw[flight] (CD9) -- node[left, pos=0.2] {-500} (RB10);
+\draw[flight] (RB9) -- node[left, pos=0.2] {-700} (CD10);
+\draw[flight] (CD10) -- node[left, pos=0.2] {-400} (RP11);
+\draw[flight] (RB10) -- node[left, pos=0.2] {-800} (RP12);
+
+% Arcos de Pernoite
+\draw[night] (CD19) to[bend right=25] node[above] {+800} (CD9);
+\draw[night] (RB19) to[bend right=25] node[above] {+800} (RB9);
+\draw[night] (RP19) to[bend right=25] node[above] {+800} (RP10);
+
+\end{tikzpicture}
+\end{center}
+
+
+\subsection{Modelo y restricciones}
+Este modelo es un problema de \textbf{circulación pura} 
+(no hay oferta ni demanda externa). 
+El flujo total que circula por la red está determinado 
+por cuántos ciclos (aviones) resultan rentables.
+
+La restricción principal añadida en este modelo 
+son los tres arcos de $7 p.m.$ a $9 a.m.$ 
+con costo $+800$,el algoritmo enviaría infinitos aviones;
+ con ellos, un avión solo volará si la suma de los 
+ costos de sus vuelos diarios es \textbf{menor a -800} 
+ (es decir, utilidad $>$ 800).
+
+\subsection{Método de Rutas más Cortas y Circuitos Negativos}
+
+El algoritmo de búsqueda de 
+\textbf{Rutas más Cortas (Shortest Path)} o 
+cancelación de \textbf{Circuitos Negativos}. 
+Buscamos rutas cíclicas cerradas 
+(el itinerario diario de 1 avión) 
+donde la suma de los costos de la red sea negativa.
+
+\textbf{Evaluación de Ciclos Diarios (Itinerarios):}
+Buscamos encadenar vuelos y tiempos de espera para formar el itinerario de un avión que retorne a su origen.
+
+\begin{itemize}
+    \item \textbf{Avión 1 (Ciclo A):} Inicia en RB a las 9 a.m.
+    \begin{itemize}
+        \item RB 9am $\to$ CD 10am (Costo: -700)
+        \item \textit{Espera de 10am a 10am (0 h)}
+        \item CD 10am $\to$ RP 11am (Costo: -400)
+        \item \textit{Espera de 11am a 3pm}
+        \item RP 3pm $\to$ RB 5pm (Costo: -550)
+        \item \textit{Espera y pernoite} RB 7pm $\to$ RB 9am (Costo fijo: +800)
+    \end{itemize}
+    \textbf{Costo del Circuito 1:} $-700 - 400 - 550 + 800 = \mathbf{-850}$. \\
+    (Es un circuito negativo, por lo que asignamos \textbf{1 avión} a esta ruta. Ganancia neta real: \$850).
+
+    \item \textbf{Avión 2 (Ciclo B):} Inicia en RP a las 10 a.m.
+    \begin{itemize}
+        \item RP 10am $\to$ CD 11am (Costo: -400)
+        \item \textit{Espera de 11am a 4pm}
+        \item CD 4pm $\to$ RP 5pm (Costo: -750)
+        \item \textit{Espera y pernoite} RP 7pm $\to$ RP 10am (Costo fijo: +800)
+    \end{itemize}
+    \textbf{Costo del Circuito 2:} $-400 - 750 + 800 = \mathbf{-350}$. \\
+    (Es un circuito negativo, asignamos \textbf{1 avión}. Ganancia neta real: \$350).
+
+    \item \textbf{Avión 3 (Ciclo C):} Inicia en CD a las 9 a.m.
+    \begin{itemize}
+        \item CD 9am $\to$ RB 10am (Costo: -500)
+        \item RB 10am $\to$ RP 12pm (Costo: -800)
+        \item RP 2pm $\to$ CD 3pm (Costo: -350)
+        \item \textit{Espera y pernoite} CD 7pm $\to$ CD 9am (Costo fijo: +800)
+    \end{itemize}
+    \textbf{Costo del Circuito 3:} $-500 - 800 - 350 + 800 = \mathbf{-850}$. \\
+    (Es un circuito negativo, asignamos \textbf{1 avión}. Ganancia neta real: \$850).
+\end{itemize}
+
+\begin{alerta}{Conclusión}
+Mediante el método de rutas más cortas (encadenando los arcos de menor costo para formar circuitos cerrados), el algoritmo determina que \textbf{Princesa Peach Airlines debe operar con 3 aviones}. 
+Al cancelar estos 3 circuitos negativos, el costo total minimizado en la red es de $-850 - 350 - 850 = -2050$, lo que se traduce en la \textbf{ganancia máxima posible de \$2,050 diarios} para la aerolínea, operando 8 de los 12 vuelos posibles y dejando inactivos los vuelos que no alcanzan a cubrir la rentabilidad marginal requerida por el modelo de red.
+\end{alerta}
+
+\newpage
+
+
+\section{Flujo a Costo Mínimo: Método de Rutas Más Cortas}
+
+\begin{ejercicio}{Asignación de Flujo $v=19$}{prob1}
+Realizar el siguiente ejercicio resolviendo la red con formato (capacidad, costo) para satisfacer un flujo $v=19$, justificando cada decisión mediante iteraciones de rutas más cortas.
+\end{ejercicio}
+
+
+\subsection{Red Inicial}
+
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={circle, draw, minimum size=0.9cm, font=\sffamily\small\bfseries},
+    source_sink/.style={fill=gray!80!black, text=white},
+    regular_node/.style={fill=cyan!10},
+    edge/.style={->, >=stealth, thick, color=gray!80!black}
+]
+
+% Nodos
+\node[source_sink] (s) at (0, 0) {s};
+\node[regular_node] (1) at (3, 2.5) {1};
+\node[regular_node] (2) at (3, -2.5) {2};
+\node[regular_node] (3) at (8, 2.5) {3};
+\node[regular_node] (4) at (8, -2.5) {4};
+\node[source_sink] (t) at (11, 0) {t};
+
+% Arcos (Capacidad, Costo)
+\draw[edge] (s) -- node[above left, draw=none, fill=none] {(10, 12)} (1);
+\draw[edge] (s) -- node[below left, draw=none, fill=none] {(12, 15)} (2);
+
+\draw[edge] (1) -- node[left, draw=none, fill=none] {(5, 15)} (2);
+\draw[edge] (1) -- node[above, draw=none, fill=none] {(5, 20)} (3);
+\draw[edge] (1) -- node[above right, draw=none, fill=white, inner sep=1pt, pos=0.3] {(5, 17)} (4);
+
+\draw[edge] (2) -- node[above left, draw=none, fill=white, inner sep=1pt, pos=0.3] {(7, 10)} (3);
+\draw[edge] (2) -- node[below, draw=none, fill=none] {(13, 10)} (4);
+
+\draw[edge] (4) -- node[right, draw=none, fill=none] {(10, 10)} (3);
+
+\draw[edge] (3) -- node[above right, draw=none, fill=none] {($\infty$, 0)} (t);
+\draw[edge] (4) -- node[below right, draw=none, fill=none] {($\infty$, 0)} (t);
+
+\end{tikzpicture}
+\end{center}
+
+\subsection{Método de Rutas Más Cortas Sucesivas}
+
+El objetivo es enviar $v=19$ unidades de flujo. 
+En cada paso, identificamos el camino de menor costo 
+desde $s$ hasta $t$ en la red (o red residual) y 
+enviamos todo el flujo que el cuello de botella 
+(capacidad mínima) permita.
+
+\subsubsection*{Iteración 1}
+Evaluamos los costos de las rutas principales desde $s$ hasta $t$:
+\begin{itemize}
+    \item Ruta $s \to 1 \to 3 \to t$: Costo = $12 + 20 + 0 = \$32$. Capacidad = $\min(10, 5, \infty) = 5$.
+    \item Ruta $s \to 1 \to 4 \to t$: Costo = $12 + 17 + 0 = \$29$. Capacidad = $\min(10, 5, \infty) = 5$.
+    \item \textbf{Ruta $s \to 2 \to 3 \to t$:} Costo = $15 + 10 + 0 = \mathbf{\$25}$. Capacidad = $\min(12, 7, \infty) = \mathbf{7}$.
+    \item \textbf{Ruta $s \to 2 \to 4 \to t$:} Costo = $15 + 10 + 0 = \mathbf{\$25}$. Capacidad = $\min(12, 13, \infty) = \mathbf{12}$.
+\end{itemize}
+
+\textbf{Decisión:} Las rutas más baratas cuestan \$25 (pasando por el nodo 2). Elegimos la ruta $s \to 2 \to 4 \to t$ porque tiene una gran capacidad (12 unidades).
+\begin{itemize}
+    \item \textbf{Flujo enviado ($f_1$):} 12 unidades.
+    \item \textbf{Costo de iteración:} $12 \times 25 = \$300$.
+    \item \textbf{Flujo acumulado:} 12 / 19. (Faltan 7 unidades).
+\end{itemize}
+\textit{Actualización de red residual:} El arco $s \to 2$ tenía capacidad 12, por lo que queda \textbf{saturado} (capacidad residual 0) y ya no se puede usar en la siguiente iteración.
+
+\subsubsection*{Iteración 2}
+Con el arco $s \to 2$ bloqueado, todo el flujo restante debe salir forzosamente por $s \to 1$.
+Evaluamos las rutas restantes disponibles:
+\begin{itemize}
+    \item Ruta $s \to 1 \to 3 \to t$: Costo = $12 + 20 + 0 = \$32$. Capacidad = 5.
+    \item \textbf{Ruta $s \to 1 \to 4 \to t$:} Costo = $12 + 17 + 0 = \mathbf{\$29}$. Capacidad = $\min(10, 5, \infty) = \mathbf{5}$.
+\end{itemize}
+
+\textbf{Decisión:} La ruta más barata disponible es $s \to 1 \to 4 \to t$ con un costo de \$29. 
+\begin{itemize}
+    \item \textbf{Flujo enviado ($f_2$):} 5 unidades (limitado por el arco $1 \to 4$).
+    \item \textbf{Costo de iteración:} $5 \times 29 = \$145$.
+    \item \textbf{Flujo acumulado:} $12 + 5 = 17 / 19$. (Faltan 2 unidades).
+\end{itemize}
+\textit{Actualización de red residual:} El arco $1 \to 4$ tenía capacidad 5, por lo que queda \textbf{saturado}.
+
+\subsubsection*{Iteración 3}
+Con los arcos $s \to 2$ y $1 \to 4$ bloqueados, buscamos la ruta para las 2 unidades faltantes.
+\begin{itemize}
+    \item \textbf{Ruta $s \to 1 \to 3 \to t$:} Costo = $12 + 20 + 0 = \mathbf{\$32}$. Capacidad = $\min(5, 5, \infty) = \mathbf{5}$.
+\end{itemize}
+
+\textbf{Decisión:} Es la mejor ruta directa. Aunque su capacidad es 5, solo necesitamos enviar 2 unidades para cumplir la meta.
+\begin{itemize}
+    \item \textbf{Flujo enviado ($f_3$):} 2 unidades.
+    \item \textbf{Costo de iteración:} $2 \times 32 = \$64$.
+    \item \textbf{Flujo acumulado:} $17 + 2 = 19 / 19$. \textbf{(Meta alcanzada)}.
+\end{itemize}
+
+\subsection{Resultados}
+
+El requerimiento de $v=19$ unidades.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccccc}
+\hline
+\textbf{Arco} & \textbf{Flujo Asignado ($f_{ij}$)} & \textbf{Capacidad Max ($u_{ij}$)} & \textbf{Costo Unitario ($c_{ij}$)} & \textbf{Costo Total Arco} \\
+\hline
+$s \to 1$ & \textbf{7} & 10 & \$12 & \$84 \\
+$s \to 2$ & \textbf{12} & 12 & \$15 & \$180 \\
+$1 \to 3$ & \textbf{2} & 5 & \$20 & \$40 \\
+$1 \to 4$ & \textbf{5} & 5 & \$17 & \$85 \\
+$2 \to 4$ & \textbf{12} & 13 & \$10 & \$120 \\
+$3 \to t$ & \textbf{2} & $\infty$ & \$0 & \$0 \\
+$4 \to t$ & \textbf{17} & $\infty$ & \$0 & \$0 \\
+\hline
+\multicolumn{4}{r}{\textbf{Costo Mínimo Total ($Z$)}} & \textbf{\$509} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{alerta}{Conservación de Flujo}
+
+Verificamos que no haya pérdidas en los nodos intermedios:
+
+\begin{itemize}
+    \item \textbf{Nodo 1:} Entran $7$ (desde $s$). Salen $2$ (hacia 3) $+ 5$ (hacia 4) = $7$. (Correcto).
+    \item \textbf{Nodo 2:} Entran $12$ (desde $s$). Salen $12$ (hacia 4). (Correcto).
+    \item \textbf{Nodo 3:} Entran $2$ (desde 1). Salen $2$ (hacia $t$). (Correcto).
+    \item \textbf{Nodo 4:} Entran $5$ (desde 1) $+ 12$ (desde 2) = $17$. Salen $17$ (hacia $t$). (Correcto).
+    \item \textbf{Total Red:} Salen $19$ de $s$, llegan $19$ a $t$. El modelo es perfectamente coherente.
+\end{itemize}
+\end{alerta}
+
+
+\end{document}
