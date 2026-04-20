@@ -1,0 +1,12 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Introducción y Objetivo}{3}{0}{1}
+\beamer@sectionintoc {2}{Objetivos del Análisis}{5}{0}{2}
+\beamer@sectionintoc {3}{Representación de la Red}{6}{0}{3}
+\beamer@sectionintoc {4}{Aplicación 1: Ruta Más Corta (Dijkstra)}{8}{0}{4}
+\beamer@sectionintoc {5}{Aplicación 2: Rutas entre todo par (Floyd-Warshall)}{11}{0}{5}
+\beamer@sectionintoc {6}{Conclusión}{13}{0}{6}
+\beamer@sectionintoc {7}{Análisis de Sensibilidad ('What-If')}{14}{0}{7}
+\beamer@sectionintoc {8}{Conclusiones Generales}{16}{0}{8}
+\beamer@sectionintoc {9}{Organización del Equipo}{17}{0}{9}
+\beamer@sectionintoc {10}{Evidencias de Trabajo de Campo}{18}{0}{10}
+\beamer@sectionintoc {11}{Referencias}{20}{0}{11}
