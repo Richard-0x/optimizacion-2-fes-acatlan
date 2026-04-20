@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.29)  19 APR 2026 23:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.29)  19 APR 2026 23:39
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -701,24 +701,24 @@ Package babel Info: 'spanish' activates 'spanish' shorthands.
 )
 \openout1 = `Enfrentamiento.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -773,53 +773,53 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package hyperref Info: Link coloring OFF on input line 20.
+Package hyperref Info: Link coloring OFF on input line 21.
  (Enfrentamiento.out) (Enfrentamiento.out)
 \@outlinefile=\write5
 \openout5 = `Enfrentamiento.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 20.
+(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 21.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 20.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/b/n on input line 21.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> T1/cmr/m/n on input line 20.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 20.
+(Font)                  OT1/cmss/m/n --> T1/cmr/m/n on input line 21.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> T1/phv/b/n on input line 20.
+(Font)                  OT1/cmr/bx/n --> T1/phv/b/n on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> T1/phv/b/n on input line 20.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 20.
+(Font)                  OT1/cmr/bx/n --> T1/phv/b/n on input line 21.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> T1/phv/m/n on input line 20.
+(Font)                  OT1/cmss/m/n --> T1/phv/m/n on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> T1/phv/m/n on input line 20.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 20.
+(Font)                  OT1/cmss/bx/n --> T1/phv/m/n on input line 21.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> T1/phv/m/it on input line 20.
+(Font)                  OT1/cmr/m/it --> T1/phv/m/it on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> T1/phv/m/it on input line 20.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 20.
+(Font)                  OT1/cmr/bx/it --> T1/phv/m/it on input line 21.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> T1/cmtt/m/n on input line 20.
+(Font)                  OT1/cmtt/m/n --> T1/cmtt/m/n on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> T1/cmtt/m/n on input line 20.
+(Font)                  OT1/cmtt/m/n --> T1/cmtt/m/n on input line 21.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  T1/phv/m/n --> T1/phv/b/n on input line 20.
+(Font)                  T1/phv/m/n --> T1/phv/b/n on input line 21.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  T1/phv/m/it --> T1/phv/b/it on input line 20.
+(Font)                  T1/phv/m/it --> T1/phv/b/it on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/b/n --> T1/cmr/b/n on input line 20.
+(Font)                  OT1/cmss/b/n --> T1/cmr/b/n on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  T1/phv/b/n --> T1/phv/b/n on input line 20.
+(Font)                  T1/phv/b/n --> T1/phv/b/n on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  T1/phv/m/n --> T1/phv/b/n on input line 20.
+(Font)                  T1/phv/m/n --> T1/phv/b/n on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  T1/phv/m/it --> T1/phv/b/it on input line 20.
+(Font)                  T1/phv/m/it --> T1/phv/b/it on input line 21.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  T1/cmtt/m/n --> T1/cmtt/b/n on input line 20.
+(Font)                  T1/cmtt/m/n --> T1/cmtt/b/n on input line 21.
  (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-basic-dictionary-English.dict
 Dictionary: translator-basic-dictionary, Language: English 
 ) (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-bibliography-dictionary-English.dict
@@ -833,205 +833,205 @@ Dictionary: translator-numbers-dictionary, Language: English
 ) (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/translator\translator-theorem-dictionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-LaTeX Info: Redefining \. on input line 20.
-LaTeX Info: Redefining \% on input line 20.
+LaTeX Info: Redefining \. on input line 21.
+LaTeX Info: Redefining \% on input line 21.
  (Enfrentamiento.nav)
-LaTeX Font Info:    Trying to load font information for U+msa on input line 24.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 25.
  (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 24.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 25.
  (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <8> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 24.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 25.
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <6> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 24.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 25.
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <5> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 24.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 25.
  [1
 
 {C:/Users/ricar/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./large-corner.pdf> <../../Archivos/Imagenes_Logos/L.Acatlan.png>] (Enfrentamiento.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 )
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [2
 
  <./small-corner.pdf> <../../Archivos/Imagenes_Logos/FAC_acatlan.png> <../../Archivos/Imagenes_Logos/LOGO_UNAM.png>]
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10.95> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 50.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 51.
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [3
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 69.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 78.
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <7> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 69.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 78.
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [4
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [5
 
 ]
-Overfull \vbox (14.55103pt too high) detected at line 163
+Overfull \vbox (14.55103pt too high) detected at line 177
  []
 
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [6
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [7
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [8
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [9
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [10
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [11
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 269.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 283.
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [12
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [13
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [14
 
 ]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [15
 
 ]
-Overfull \vbox (5.5859pt too high) detected at line 344
+Overfull \vbox (5.5859pt too high) detected at line 358
  []
 
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [16
 
 ]
-Underfull \hbox (badness 3138) in paragraph at lines 379--379
+Underfull \hbox (badness 3138) in paragraph at lines 393--393
 []\T1/phv/b/n/10.95 Resolución Al-go-rít-mi-ca
  []
 
 
-Underfull \hbox (badness 3138) in paragraph at lines 379--379
+Underfull \hbox (badness 3138) in paragraph at lines 393--393
 []\T1/phv/b/n/10.95 Resolución Al-go-rít-mi-ca
  []
 
 
-Underfull \hbox (badness 4582) in paragraph at lines 379--379
+Underfull \hbox (badness 4582) in paragraph at lines 393--393
 []\T1/phv/m/n/10.95 Análisis de Sen-si-bi-li-dad
  []
 
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [17
 
 ]
-<../../Archivos/Imagenes_Logos/E1.jpeg, id=401, 1210.5225pt x 2041.6275pt>
+<../../Archivos/Imagenes_Logos/E1.jpeg, id=423, 1210.5225pt x 2041.6275pt>
 File: ../../Archivos/Imagenes_Logos/E1.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E1.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E1.jpeg  used on input line 393.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E1.jpeg  used on input line 407.
 (pdftex.def)             Requested size: 55.13611pt x 92.99077pt.
-<../../Archivos/Imagenes_Logos/E2.jpeg, id=402, 1210.5225pt x 2073.7475pt>
+<../../Archivos/Imagenes_Logos/E2.jpeg, id=424, 1210.5225pt x 2073.7475pt>
 File: ../../Archivos/Imagenes_Logos/E2.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E2.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E2.jpeg  used on input line 393.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E2.jpeg  used on input line 407.
 (pdftex.def)             Requested size: 54.28644pt x 92.99818pt.
-<../../Archivos/Imagenes_Logos/E3.jpeg, id=403, 1210.5225pt x 2115.905pt>
+<../../Archivos/Imagenes_Logos/E3.jpeg, id=425, 1210.5225pt x 2115.905pt>
 File: ../../Archivos/Imagenes_Logos/E3.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E3.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E3.jpeg  used on input line 393.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E3.jpeg  used on input line 407.
 (pdftex.def)             Requested size: 53.19666pt x 92.98387pt.
-<../../Archivos/Imagenes_Logos/E4.jpeg, id=404, 1210.5225pt x 2115.905pt>
+<../../Archivos/Imagenes_Logos/E4.jpeg, id=426, 1210.5225pt x 2115.905pt>
 File: ../../Archivos/Imagenes_Logos/E4.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E4.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E4.jpeg  used on input line 393.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E4.jpeg  used on input line 407.
 (pdftex.def)             Requested size: 53.19666pt x 92.98387pt.
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [18
 
  <../../Archivos/Imagenes_Logos/E1.jpeg> <../../Archivos/Imagenes_Logos/E2.jpeg> <../../Archivos/Imagenes_Logos/E3.jpeg> <../../Archivos/Imagenes_Logos/E4.jpeg>]
-<../../Archivos/Imagenes_Logos/R1.jpeg, id=422, 1210.5225pt x 2122.93124pt>
+<../../Archivos/Imagenes_Logos/R1.jpeg, id=445, 1210.5225pt x 2122.93124pt>
 File: ../../Archivos/Imagenes_Logos/R1.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R1.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R1.jpeg  used on input line 405.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R1.jpeg  used on input line 419.
 (pdftex.def)             Requested size: 53.01195pt x 92.9687pt.
-<../../Archivos/Imagenes_Logos/R2.jpeg, id=423, 1210.5225pt x 2032.59375pt>
+<../../Archivos/Imagenes_Logos/R2.jpeg, id=446, 1210.5225pt x 2032.59375pt>
 File: ../../Archivos/Imagenes_Logos/R2.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R2.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R2.jpeg  used on input line 405.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R2.jpeg  used on input line 419.
 (pdftex.def)             Requested size: 55.37624pt x 92.9825pt.
-<../../Archivos/Imagenes_Logos/R3.jpeg, id=424, 1210.5225pt x 1613.02625pt>
+<../../Archivos/Imagenes_Logos/R3.jpeg, id=447, 1210.5225pt x 1613.02625pt>
 File: ../../Archivos/Imagenes_Logos/R3.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R3.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R3.jpeg  used on input line 405.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R3.jpeg  used on input line 419.
 (pdftex.def)             Requested size: 69.78366pt x 92.98703pt.
-<../../Archivos/Imagenes_Logos/R4.jpeg, id=425, 1210.5225pt x 2086.79625pt>
+<../../Archivos/Imagenes_Logos/R4.jpeg, id=448, 1210.5225pt x 2086.79625pt>
 File: ../../Archivos/Imagenes_Logos/R4.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R4.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R4.jpeg  used on input line 405.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R4.jpeg  used on input line 419.
 (pdftex.def)             Requested size: 53.9355pt x 92.97836pt.
 
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [19
 
  <../../Archivos/Imagenes_Logos/R1.jpeg> <../../Archivos/Imagenes_Logos/R2.jpeg> <../../Archivos/Imagenes_Logos/R3.jpeg> <../../Archivos/Imagenes_Logos/R4.jpeg>]
-LaTeX Font Info:    Trying to load font information for TS1+phv on input line 436.
+LaTeX Font Info:    Trying to load font information for TS1+phv on input line 450.
  (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1phv.fd
 File: ts1phv.fd 2020/03/25 scalable font definitions for TS1/phv.
 )
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [20
 
  <C:/Users/ricar/AppData/Local/Programs/MiKTeX/tex/latex/beamer/beamericonarticle.pdf>]
-Overfull \vbox (0.7791pt too high) has occurred while \output is active []
+Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
  [21
 
@@ -1054,20 +1054,20 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
  ***********
 Package rerunfilecheck Info: File `Enfrentamiento.out' has not changed.
-(rerunfilecheck)             Checksum: 914C48FA8203295580D7491C149D7641;2061.
+(rerunfilecheck)             Checksum: FD5189FC99B3D3334DC7FB2E9242A5D3;2223.
  ) 
 Here is how much of TeX's memory you used:
- 28025 strings out of 467871
- 568520 string characters out of 5418376
- 997332 words of memory out of 5000000
- 56270 multiletter control sequences out of 15000+600000
+ 28043 strings out of 467871
+ 568876 string characters out of 5418376
+ 998610 words of memory out of 5000000
+ 56287 multiletter control sequences out of 15000+600000
  691996 words of font info for 116 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,16n,123p,530b,821s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ricar\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1095.pk> <C:\Users\ricar\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0800.pk><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmss10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmss8.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on Enfrentamiento.pdf (21 pages, 3508416 bytes).
+Output written on Enfrentamiento.pdf (21 pages, 3513578 bytes).
 PDF statistics:
- 590 PDF objects out of 1000 (max. 8388607)
- 58 named destinations out of 1000 (max. 500000)
- 201 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 616 PDF objects out of 1000 (max. 8388607)
+ 59 named destinations out of 1000 (max. 500000)
+ 209 words of extra memory for PDF output out of 10000 (max. 10000000)
 
