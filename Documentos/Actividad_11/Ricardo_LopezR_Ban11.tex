@@ -1,0 +1,120 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+%--------------------------------------------------------------------------------
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% ---------------------------------------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+    
+
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textbf{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Redes de Optimización Flujo a Costo Mínimo}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% CONTENIDO 
+
+
+
+\end{document}
