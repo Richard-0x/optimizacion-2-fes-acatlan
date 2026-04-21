@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.29)  19 APR 2026 23:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.3.29)  20 APR 2026 22:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -884,7 +884,7 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
  [5
 
 ]
-Overfull \vbox (14.55103pt too high) detected at line 177
+Overfull \vbox (14.55103pt too high) detected at line 175
  []
 
 
@@ -919,7 +919,7 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 283.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 281.
 
 Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 
@@ -941,7 +941,7 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
  [15
 
 ]
-Overfull \vbox (5.5859pt too high) detected at line 358
+Overfull \vbox (5.5859pt too high) detected at line 356
  []
 
 
@@ -950,17 +950,17 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
  [16
 
 ]
-Underfull \hbox (badness 3138) in paragraph at lines 393--393
+Underfull \hbox (badness 3138) in paragraph at lines 391--391
 []\T1/phv/b/n/10.95 Resolución Al-go-rít-mi-ca
  []
 
 
-Underfull \hbox (badness 3138) in paragraph at lines 393--393
+Underfull \hbox (badness 3138) in paragraph at lines 391--391
 []\T1/phv/b/n/10.95 Resolución Al-go-rít-mi-ca
  []
 
 
-Underfull \hbox (badness 4582) in paragraph at lines 393--393
+Underfull \hbox (badness 4582) in paragraph at lines 391--391
 []\T1/phv/m/n/10.95 Análisis de Sen-si-bi-li-dad
  []
 
@@ -973,22 +973,22 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 <../../Archivos/Imagenes_Logos/E1.jpeg, id=423, 1210.5225pt x 2041.6275pt>
 File: ../../Archivos/Imagenes_Logos/E1.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E1.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E1.jpeg  used on input line 407.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E1.jpeg  used on input line 405.
 (pdftex.def)             Requested size: 55.13611pt x 92.99077pt.
 <../../Archivos/Imagenes_Logos/E2.jpeg, id=424, 1210.5225pt x 2073.7475pt>
 File: ../../Archivos/Imagenes_Logos/E2.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E2.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E2.jpeg  used on input line 407.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E2.jpeg  used on input line 405.
 (pdftex.def)             Requested size: 54.28644pt x 92.99818pt.
 <../../Archivos/Imagenes_Logos/E3.jpeg, id=425, 1210.5225pt x 2115.905pt>
 File: ../../Archivos/Imagenes_Logos/E3.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E3.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E3.jpeg  used on input line 407.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E3.jpeg  used on input line 405.
 (pdftex.def)             Requested size: 53.19666pt x 92.98387pt.
 <../../Archivos/Imagenes_Logos/E4.jpeg, id=426, 1210.5225pt x 2115.905pt>
 File: ../../Archivos/Imagenes_Logos/E4.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/E4.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E4.jpeg  used on input line 407.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/E4.jpeg  used on input line 405.
 (pdftex.def)             Requested size: 53.19666pt x 92.98387pt.
 
 Overfull \vbox (20.18312pt too high) has occurred while \output is active []
@@ -999,22 +999,22 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
 <../../Archivos/Imagenes_Logos/R1.jpeg, id=445, 1210.5225pt x 2122.93124pt>
 File: ../../Archivos/Imagenes_Logos/R1.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R1.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R1.jpeg  used on input line 419.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R1.jpeg  used on input line 417.
 (pdftex.def)             Requested size: 53.01195pt x 92.9687pt.
 <../../Archivos/Imagenes_Logos/R2.jpeg, id=446, 1210.5225pt x 2032.59375pt>
 File: ../../Archivos/Imagenes_Logos/R2.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R2.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R2.jpeg  used on input line 419.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R2.jpeg  used on input line 417.
 (pdftex.def)             Requested size: 55.37624pt x 92.9825pt.
 <../../Archivos/Imagenes_Logos/R3.jpeg, id=447, 1210.5225pt x 1613.02625pt>
 File: ../../Archivos/Imagenes_Logos/R3.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R3.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R3.jpeg  used on input line 419.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R3.jpeg  used on input line 417.
 (pdftex.def)             Requested size: 69.78366pt x 92.98703pt.
 <../../Archivos/Imagenes_Logos/R4.jpeg, id=448, 1210.5225pt x 2086.79625pt>
 File: ../../Archivos/Imagenes_Logos/R4.jpeg Graphic file (type jpg)
 <use ../../Archivos/Imagenes_Logos/R4.jpeg>
-Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R4.jpeg  used on input line 419.
+Package pdftex.def Info: ../../Archivos/Imagenes_Logos/R4.jpeg  used on input line 417.
 (pdftex.def)             Requested size: 53.9355pt x 92.97836pt.
 
 Overfull \vbox (20.18312pt too high) has occurred while \output is active []
@@ -1022,7 +1022,7 @@ Overfull \vbox (20.18312pt too high) has occurred while \output is active []
  [19
 
  <../../Archivos/Imagenes_Logos/R1.jpeg> <../../Archivos/Imagenes_Logos/R2.jpeg> <../../Archivos/Imagenes_Logos/R3.jpeg> <../../Archivos/Imagenes_Logos/R4.jpeg>]
-LaTeX Font Info:    Trying to load font information for TS1+phv on input line 450.
+LaTeX Font Info:    Trying to load font information for TS1+phv on input line 448.
  (C:\Users\ricar\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1phv.fd
 File: ts1phv.fd 2020/03/25 scalable font definitions for TS1/phv.
 )
@@ -1059,13 +1059,13 @@ Package rerunfilecheck Info: File `Enfrentamiento.out' has not changed.
 Here is how much of TeX's memory you used:
  28043 strings out of 467871
  568876 string characters out of 5418376
- 998610 words of memory out of 5000000
+ 998254 words of memory out of 5000000
  56287 multiletter control sequences out of 15000+600000
  691996 words of font info for 116 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,16n,123p,530b,821s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\ricar\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1095.pk> <C:\Users\ricar\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0800.pk><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmss10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmss8.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/Users/ricar/AppData/Local/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on Enfrentamiento.pdf (21 pages, 3513578 bytes).
+Output written on Enfrentamiento.pdf (21 pages, 3513256 bytes).
 PDF statistics:
  616 PDF objects out of 1000 (max. 8388607)
  59 named destinations out of 1000 (max. 500000)
