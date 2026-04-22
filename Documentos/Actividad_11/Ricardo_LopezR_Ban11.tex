@@ -114,6 +114,463 @@
 \setcounter{page}{1}
 
 % CONTENIDO 
+\section{Método de Simplex}
+
+
+\textbf{Red y Modelo Lineal}\\
+El objetivo es encontrar el flujo $x_{ij}$ a través de los arcos que minimice el costo total de transporte, satisfaciendo la oferta y demanda, y respetando las capacidades de cada arco $(u_{ij}, c_{ij})$.
+
+\begin{itemize}
+    \item \textbf{Oferta/Demanda ($b_i$):} $b_1 = 32$, $b_2 = 0$, $b_3 = 0$, $b_4 = -22$, $b_5 = -10$. (La suma neta es $\sum b_i = 0$, por lo que la red está balanceada).
+\end{itemize}
+
+\textbf{Función Objetivo:}
+\[ \text{Minimizar } Z = 15x_{12} + 11x_{13} + 5x_{23} + 15x_{24} + 10x_{25} + 4x_{34} + 5x_{35} + 14x_{54} \]
+
+\textbf{Sujeto a (Restricciones de Flujo):}
+\begin{align*}
+    - x_{12} - x_{13} &= -32 \quad \text{(Nodo 1)}\\
+    x_{12} - x_{23} - x_{24} - x_{25} &= 0 \quad \text{(Nodo 2)}\\
+    x_{13} + x_{23} - x_{34} - x_{35} &= 0 \quad \text{(Nodo 3)}\\
+    x_{24} + x_{34} + x_{54} &= 22 \quad \text{(Nodo 4)}\\
+    x_{25} + x_{35} - x_{54} &= 10 \quad \text{(Nodo 5)}
+\end{align*}
+
+\textbf{Sujeto a (Restricciones de Capacidad):}
+\[ 0 \le x_{12} \le 20, \quad 0 \le x_{13} \le 15, \quad 0 \le x_{24} \le 30, \quad 0 \le x_{25} \le 20, \quad 0 \le x_{34} \le 12 \]
+\[ 0 \le x_{23} \le \infty, \quad 0 \le x_{35} \le \infty, \quad 0 \le x_{54} \le \infty \]
+
+\vspace{0.3cm}
+\textbf{Gráfica}
+
+\begin{center}
+
+\begin{tikzpicture}[>=stealth, scale=0.8, transform shape, node distance=2.5cm, main node/.style={circle,draw,thick,fill=cyan!10,minimum size=8mm, font=\bfseries}]
+  \node[main node, label=left:$+32$] (1) {1};
+  \node[main node] (2) [above right=of 1] {2};
+  \node[main node] (3) [below right=of 1] {3};
+  \node[main node, label=right:$-22$] (4) [right=of 2] {4};
+  \node[main node, label=right:$-10$] (5) [right=of 3] {5};
+  
+  \draw[->, thick, color=gray!80!black] (1) -- node[above, sloped, scale=0.85] {(20, 15)} (2);
+  \draw[->, thick, color=gray!80!black] (1) -- node[below, sloped, scale=0.85] {(15, 11)} (3);
+  \draw[->, thick, color=gray!80!black] (2) -- node[left, scale=0.85] {($\infty$, 5)} (3);
+  \draw[->, thick, color=gray!80!black] (2) -- node[above, scale=0.85] {(30, 15)} (4);
+  \draw[->, thick, color=gray!80!black] (2) -- node[above right, sloped, pos=0.3, scale=0.85] {(20, 10)} (5);
+  \draw[->, thick, color=gray!80!black] (3) -- node[above left, sloped, pos=0.3, scale=0.85] {(12, 4)} (4);
+  \draw[->, thick, color=gray!80!black] (3) -- node[below, scale=0.85] {($\infty$, 5)} (5);
+  \draw[->, thick, color=gray!80!black] (5) -- node[right, scale=0.85] {($\infty$, 14)} (4);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+\textbf{Método Simplex}
+
+Iniciamos proponiendo una Solución Básica Factible (un árbol generador de $n-1 = 4$ arcos). Aprovecharemos los límites superiores (UB) en los arcos más baratos para saturarlos, y los arcos restantes formarán nuestro árbol básico ($T$).
+
+\begin{itemize}
+    \item Saturamos $x_{13} = 15$ (UB) y $x_{34} = 12$ (UB). 
+    \item Variables Básicas que conforman el Árbol $T$: $(1,2), (2,4), (2,5), (3,5)$.
+\end{itemize}
+
+Calculamos los flujos básicos ajustando la oferta/demanda por las variables saturadas:
+
+\begin{table}[H]
+\centering
+\resizebox{0.9\textwidth}{!}{%
+\begin{tabular}{ll}
+\toprule
+\textbf{Ajuste en Nodos} & \textbf{Flujo en Variables Básicas} \\
+\midrule
+Nodo 1: Oferta de 32. Manda 15 a N3. Restan 17. & $x_{12} = 17$ (Cumple límite $17 \le 20$) \\
+Nodo 3: Recibe 15 de N1. Manda 12 a N4. Restan 3. & $x_{35} = 3$ (Cumple límite $3 \le \infty$) \\
+Nodo 4: Demanda de 22. Recibe 12 de N3, faltan 10. & $x_{24} = 10$ (Cumple límite $10 \le 30$) \\
+Nodo 2: Recibe 17 de N1. Manda 10 a N4. Restan 7. & $x_{25} = 7$ (Cumple límite $7 \le 20$) \\
+Nodo 5: Recibe 7 de N2 y 3 de N3. Total 10. & (Satisface demanda exacta de -10. Balance correcto) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\textbf{Cálculo de Multiplicadores Duales ($y_i$)}\\
+Fijamos $y_1 = 0$ y usamos la relación $y_i - y_j = c_{ij}$ estrictamente para los arcos básicos en $T$:
+\begin{align*}
+(1,2) \in T &\implies y_1 - y_2 = 15 \implies 0 - y_2 = 15 \implies \mathbf{y_2 = -15} \\
+(2,4) \in T &\implies y_2 - y_4 = 15 \implies -15 - y_4 = 15 \implies \mathbf{y_4 = -30} \\
+(2,5) \in T &\implies y_2 - y_5 = 10 \implies -15 - y_5 = 10 \implies \mathbf{y_5 = -25} \\
+(3,5) \in T &\implies y_3 - y_5 = 5 \implies y_3 - (-25) = 5 \implies \mathbf{y_3 = -20} 
+\end{align*}
+
+\textbf{Cálculo de Costos Reducidos ($\bar{c}_{ij}$)}\\
+Evaluamos las variables No Básicas usando $\bar{c}_{ij} = c_{ij} - y_i + y_j$:
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccl}
+\toprule
+\textbf{Arco No Básico} & \textbf{Estado actual} & \textbf{Cálculo} ($\bar{c}_{ij}$) & \textbf{Condición de Optimalidad} & \textbf{¿Cumple?} \\
+\midrule
+$(2,3)$ & Límite Inferior ($x=0$) & $5 - (-15) + (-20) = 0$ & $\bar{c}_{ij} \ge 0$ & Sí \\
+$(5,4)$ & Límite Inferior ($x=0$) & $14 - (-25) + (-30) = 9$ & $\bar{c}_{ij} \ge 0$ & Sí \\
+$(1,3)$ & Límite Superior ($x=15$) & $11 - 0 + (-20) = -9$ & $\bar{c}_{ij} \le 0$ & Sí \\
+$(3,4)$ & Límite Superior ($x=12$) & $4 - (-20) + (-30) = -6$ & $\bar{c}_{ij} \le 0$ & Sí \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{mytheo}{Solución Óptima}{th1}
+Dado que todos los costos reducidos cumplen con las condiciones de optimalidad en la primera iteración, la solución propuesta es la óptima global.
+\begin{itemize}
+    \item \textbf{Plan de distribución (Flujos):} $x_{12}=17$, $x_{13}=15$, $x_{24}=10$, $x_{25}=7$, $x_{34}=12$, $x_{35}=3$. Los arcos $(2,3)$ y $(5,4)$ llevan flujo cero.
+    \item \textbf{Costo Mínimo de Transporte (Z):} 
+    \[ Z = 17(15) + 15(11) + 10(15) + 7(10) + 12(4) + 3(5) = \mathbf{\$703} \]
+\end{itemize}
+\end{mytheo}
+
+\newpage
+
+
+\textbf{Red y Modelo Lineal}
+
+El objetivo es determinar la distribución óptima de flujo $x_{ij}$ que minimice los costos de transporte, respetando los balances en los nodos y las capacidades de las vías.
+
+\begin{itemize}
+    \item \textbf{Oferta/Demanda ($b_i$):} $b_1 = 11$, $b_2 = 0$, $b_3 = 0$, $b_4 = -4$, $b_5 = -7$. (La suma neta es $\sum b_i = 0$, red balanceada).
+\end{itemize}
+
+\textbf{Función Objetivo:}
+\[ \text{Minimizar } Z = 5x_{12} + 4x_{13} + 7x_{14} + 2x_{25} + 10x_{34} + 8x_{35} + 5x_{45} \]
+
+\textbf{Sujeto a (Restricciones de Flujo):}
+\begin{align*}
+    - x_{12} - x_{13} - x_{14} &= -11 \quad \text{(Nodo 1)}\\
+    x_{12} - x_{25} &= 0 \quad \text{(Nodo 2)}\\
+    x_{13} - x_{34} - x_{35} &= 0 \quad \text{(Nodo 3)}\\
+    x_{14} + x_{34} - x_{45} &= 4 \quad \text{(Nodo 4)}\\
+    x_{25} + x_{35} + x_{45} &= 7 \quad \text{(Nodo 5)}
+\end{align*}
+
+\textbf{Sujeto a (Restricciones de Capacidad):}
+\[ 0 \le x_{12} \le 4, \quad 0 \le x_{13} \le 10, \quad 0 \le x_{14} \le 4, \quad 0 \le x_{25} \le 10 \]
+\[ 0 \le x_{34} \le 5, \quad 0 \le x_{35} \le 5, \quad 0 \le x_{45} \le 5 \]
+
+\vspace{0.3cm}
+\textbf{Gráfica}
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, scale=0.9, transform shape, main node/.style={circle,draw,thick,fill=cyan!10,minimum size=10mm, font=\bfseries}]
+  % Coordenadas ajustadas para formar el rombo de la imagen original
+  \node[main node, label=left:$+11$] (1) at (0,0) {1};
+  \node[main node] (3) at (3,0) {3};
+  \node[main node, label=right:$-7$] (5) at (6,0) {5};
+  \node[main node] (2) at (3,2) {2};
+  \node[main node, label=below:$-4$] (4) at (3,-2) {4};
+
+  \draw[->, thick, color=gray!80!black] (1) -- node[above left, scale=0.85] {(4, 5)} (2);
+  \draw[->, thick, color=gray!80!black] (1) -- node[above, scale=0.85] {(10, 4)} (3);
+  \draw[->, thick, color=gray!80!black] (1) -- node[below left, scale=0.85] {(4, 7)} (4);
+  \draw[->, thick, color=gray!80!black] (2) -- node[above right, scale=0.85] {(10, 2)} (5);
+  \draw[->, thick, color=gray!80!black] (3) -- node[right, scale=0.85] {(5, 10)} (4);
+  \draw[->, thick, color=gray!80!black] (3) -- node[above, scale=0.85] {(5, 8)} (5);
+  \draw[->, thick, color=gray!80!black] (4) -- node[below right, scale=0.85] {(5, 5)} (5);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.3cm}
+\textbf{Método Simplex}
+
+Generamos una Solución Básica Factible estableciendo un árbol de $n-1=4$ arcos. Saturaremos estratégicamente los arcos $(1,2)$ y $(1,4)$ en su límite superior (UB). Nuestro árbol generador básico ($T$) será: $(1,3), (2,5), (3,5), (4,5)$.
+
+\begin{table}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tabular}{ll}
+\toprule
+\textbf{Ajuste en Nodos} & \textbf{Flujo en Variables Básicas} \\
+\midrule
+Variables saturadas al Límite Superior (UB) & $x_{12} = 4$ y $x_{14} = 4$ \\
+Nodo 1: Oferta de 11. Envía 4 a N2 y 4 a N4. Restan 3. & $x_{13} = 3$ (Cumple límite $3 \le 10$) \\
+Nodo 2: Recibe 4 de N1. Debe vaciarse enviando a N5. & $x_{25} = 4$ (Cumple límite $4 \le 10$) \\
+Nodo 4: Demanda de 4, satisfecha totalmente por N1. & $x_{45} = 0$ (Cumple límite $0 \le 5$) \\
+Nodo 3: Recibe 3 de N1. Debe enviarlos a N5. & $x_{35} = 3$ (Cumple límite $3 \le 5$) \\
+Nodo 5: Recibe 4 de N2 y 3 de N3. Total 7. & (Satisface demanda de -7. Balance correcto) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\textbf{Cálculo de Multiplicadores Duales ($y_i$)}\\
+Fijamos $y_1 = 0$ y calculamos para los arcos básicos en el árbol $T$ ($c_{ij} = y_i - y_j$):
+\begin{align*}
+(1,3) \in T &\implies y_1 - y_3 = 4 \implies 0 - y_3 = 4 \implies \mathbf{y_3 = -4} \\
+(3,5) \in T &\implies y_3 - y_5 = 8 \implies -4 - y_5 = 8 \implies \mathbf{y_5 = -12} \\
+(2,5) \in T &\implies y_2 - y_5 = 2 \implies y_2 - (-12) = 2 \implies \mathbf{y_2 = -10} \\
+(4,5) \in T &\implies y_4 - y_5 = 5 \implies y_4 - (-12) = 5 \implies \mathbf{y_4 = -7} 
+\end{align*}
+
+\textbf{Cálculo de Costos Reducidos ($\bar{c}_{ij}$)}\\
+Evaluamos las variables No Básicas usando $\bar{c}_{ij} = c_{ij} - y_i + y_j$:
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccl}
+\toprule
+\textbf{Arco No Básico} & \textbf{Estado actual} & \textbf{Cálculo} ($\bar{c}_{ij}$) & \textbf{Condición} & \textbf{¿Cumple?} \\
+\midrule
+$(3,4)$ & Límite Inferior ($x=0$) & $10 - (-4) + (-7) = 7$ & $\bar{c}_{ij} \ge 0$ & Sí \\
+$(1,2)$ & Límite Superior ($x=4$) & $5 - 0 + (-10) = -5$ & $\bar{c}_{ij} \le 0$ & Sí \\
+$(1,4)$ & Límite Superior ($x=4$) & $7 - 0 + (-7) = 0$ & $\bar{c}_{ij} \le 0$ & Sí \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{mytheo}{Solución Óptima}{th2}
+Las condiciones de optimalidad se satisfacen plenamente en la primera iteración. 
+\begin{itemize}
+    \item \textbf{Plan de distribución (Flujos):} $x_{12}=4$, $x_{13}=3$, $x_{14}=4$, $x_{25}=4$, $x_{34}=0$, $x_{35}=3$, $x_{45}=0$.
+    \item \textbf{Costo Mínimo de Transporte (Z):} 
+    \[ Z = 4(5) + 3(4) + 4(7) + 4(2) + 0(10) + 3(8) + 0(5) = \mathbf{\$92} \]
+\end{itemize}
+\end{mytheo}
+
+\newpage
+
+
+\textbf{Problema 3: Red de Precedencias y Modelo de Proyecto}
+
+
+\textbf{Red de Actividades}\\
+A partir de las 10 reglas descritas, construimos la tabla de precedencias lógicas. Identificamos que las actividades K, N y P son las únicas que se conectan al nodo de Fin.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c c | c c}
+\toprule
+\textbf{Actividad} & \textbf{Predecesores} & \textbf{Actividad} & \textbf{Predecesores} \\
+\midrule
+A & - & I & B, D \\
+B & - & J & E, H \\
+C & - & K & H \\
+D & A & L & H \\
+E & A & M & F, E, H \\
+F & A & N & F, E, H \\
+G & B, D & O & I, M \\
+H & C, G & P & J, L, O \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Gráfica}
+
+Utilizaremos el modelo \textbf{AON} (Actividad en Nodo) para representar claramente las dependencias complejas sin que se crucen caóticamente las líneas.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, scale=0.75, transform shape, main node/.style={circle,draw,thick,fill=cyan!10,minimum size=8mm, font=\bfseries}]
+  \node[main node, fill=gray!20] (Start) at (0, 0) {Inicio};
+  \node[main node] (A) at (2, 4) {A};
+  \node[main node] (B) at (2, 0) {B};
+  \node[main node] (C) at (2, -4) {C};
+  \node[main node] (F) at (4, 6) {F};
+  \node[main node] (E) at (4, 4) {E};
+  \node[main node] (D) at (4, 2) {D};
+  \node[main node] (I) at (6, 2) {I};
+  \node[main node] (G) at (6, -2) {G};
+  \node[main node] (H) at (8, -3) {H};
+  \node[main node] (N) at (10, 6) {N};
+  \node[main node] (M) at (10, 3) {M};
+  \node[main node] (J) at (10, 0) {J};
+  \node[main node] (L) at (10, -2) {L};
+  \node[main node] (K) at (10, -5) {K};
+  \node[main node] (O) at (12, 2.5) {O};
+  \node[main node] (P) at (14, 0) {P};
+  \node[main node, fill=gray!20] (End) at (16, 0) {Fin};
+  
+  \draw[->, thick] (Start) -- (A); 
+  \draw[->, thick] (Start) -- (B); 
+  \draw[->, thick] (Start) -- (C);
+  \draw[->, thick] (A) -- (D); 
+  \draw[->, thick] (A) -- (E); 
+  \draw[->, thick] (A) -- (F);
+  \draw[->, thick] (B) -- (G); \draw[->, thick] (B) -- (I);
+  \draw[->, thick] (D) -- (G); \draw[->, thick] (D) -- (I);
+  \draw[->, thick] (C) -- (H); \draw[->, thick] (G) -- (H);
+  \draw[->, thick] (H) -- (K); \draw[->, thick] (H) -- (L);
+  \draw[->, thick] (E) -- (J); \draw[->, thick] (H) -- (J);
+  \draw[->, thick] (F) -- (M); \draw[->, thick] (E) -- (M); 
+  \draw[->, thick, color=red!70] (H) to[out=45, in=270] (M);
+  \draw[->, thick] (F) -- (N); \draw[->, thick] (E) -- (N); 
+  \draw[->, thick, color=red!70] (H) to[out=60, in=270] (N);
+  \draw[->, thick] (I) -- (O); \draw[->, thick] (M) -- (O);
+  \draw[->, thick] (J) -- (P); \draw[->, thick] (L) -- (P); \draw[->, thick] (O) -- (P);
+  \draw[->, thick] (K) to[out=0, in=270] (End);
+  \draw[->, thick] (N) to[out=0, in=90] (End);
+  \draw[->, thick] (P) -- (End);
+\end{tikzpicture}
+\end{center}
+
+\textbf{Aplicación del CPM}
+
+Para calcular los tiempos tempranos (ES, EF) y tardíos (LS, LF) requerimos el vector de tiempos $t_i$. Una vez proporcionados, se aplica el pase hacia adelante: $EF_i = ES_i + t_i$ y $ES_j = \max(EF_{predecesores})$. El pase hacia atrás define $LS_i = LF_i - t_i$ y la holgura $H_i = LS_i - ES_i$. Las actividades con holgura $H_i = 0$ conformarán la ruta crítica.
+
+\vspace{0.3cm}
+\textbf{Modelo Lineal y Método Simplex}
+
+El problema de la Ruta Crítica se formula como un problema de programación lineal buscando minimizar el tiempo total del proyecto ($Z$). Sea $x_i$ el tiempo de inicio más temprano de la actividad $i$, y $t_i$ su duración:
+
+\textbf{Función Objetivo:}
+\[ \text{Minimizar } Z = x_{Fin} \]
+
+\textbf{Sujeto a (Restricciones):}
+\begin{align*}
+x_A, x_B, x_C &\ge 0 \quad \text{(Nodos Iniciales)}\\
+x_D - x_A \ge t_A, \quad x_E - x_A \ge t_A, \quad x_F - x_A &\ge t_A \quad \text{(Precedencia de A)}\\
+x_G - x_B \ge t_B, \quad x_G - x_D \ge t_D &\quad \text{(Precedencia de G)}\\
+x_I - x_B \ge t_B, \quad x_I - x_D \ge t_D &\quad \text{(Precedencia de I)}\\
+x_H - x_C \ge t_C, \quad x_H - x_G \ge t_G &\quad \text{(Precedencia de H)}\\
+x_K - x_H \ge t_H, \quad x_L - x_H \ge t_H &\quad \text{(Precedencia de K y L)}\\
+x_J - x_E \ge t_E, \quad x_J - x_H \ge t_H &\quad \text{(Precedencia de J)}\\
+x_M - x_F \ge t_F, \quad x_M - x_E \ge t_E, \quad x_M - x_H &\ge t_H \quad \text{(Precedencia de M)}\\
+x_N - x_F \ge t_F, \quad x_N - x_E \ge t_E, \quad x_N - x_H &\ge t_H \quad \text{(Precedencia de N)}\\
+x_O - x_I \ge t_I, \quad x_O - x_M \ge t_M &\quad \text{(Precedencia de O)}\\
+x_P - x_J \ge t_J, \quad x_P - x_L \ge t_L, \quad x_P - x_O &\ge t_O \quad \text{(Precedencia de P)}\\
+x_{Fin} - x_K \ge t_K, \quad x_{Fin} - x_N \ge t_N, \quad x_{Fin} - x_P &\ge t_P \quad \text{(Nodos Terminales)}
+\end{align*}
+
+
+\vspace{0.3cm}
+\textbf{Análisis con Distribución Normal (PERT)}
+
+Asumiendo que las actividades siguen una distribución Beta, el tiempo esperado $\mu_i$ y la varianza $\sigma_i^2$ se calculan con estimaciones ($a, m, b$):
+
+\[ \mu_i = \frac{a + 4m + b}{6}, \quad \sigma_i^2 = \left(\frac{b - a}{6}\right)^2 \]
+Por el Teorema del Límite Central, la duración total sigue una distribución normal: $T \sim N(\mu_p, \sigma_p^2)$, donde $\mu_p$ es la suma de los $\mu_i$ de la ruta crítica y $\sigma_p^2$ la suma de sus varianzas. Para la probabilidad de culminar en un tiempo programado ($T_s$), se estandariza el valor:
+\[ Z = \frac{T_s - \mu_p}{\sigma_p} \]
+
+\newpage
+
+\textbf{Problema 4: Redes de Actividad (CPM / PERT)}
+
+\vspace{0.3cm}
+
+\textbf{a. Obtener la red de actividad}
+
+\vspace{0.3cm}
+
+De acuerdo con la tabla proporcionada, representamos la red en el formato \textbf{AOA} (Actividad en Arco), donde los nodos representan los eventos (inicio/fin de actividades) y las flechas las tareas con sus respectivas duraciones.
+
+\begin{center}
+\begin{tikzpicture}[>=stealth, scale=0.9, transform shape, main node/.style={circle,draw,thick,fill=cyan!10,minimum size=8mm, font=\bfseries}]
+  \node[main node] (1) at (0,0) {1};
+  \node[main node] (2) at (4,2) {2};
+  \node[main node] (3) at (4,-2) {3};
+  \node[main node] (4) at (8,0) {4};
+  \node[main node] (5) at (12,1) {5};
+
+  \draw[->, thick] (1) -- node[above left, scale=0.9] {(1,2): 8} (2);
+  \draw[->, thick] (1) -- node[below left, scale=0.9] {(1,3): 4} (3);
+  \draw[->, thick] (2) -- node[below left, scale=0.9] {(2,4): 2} (4);
+  \draw[->, thick] (2) -- node[above, scale=0.9] {(2,5): 10} (5);
+  \draw[->, thick] (3) -- node[below right, scale=0.9] {(3,4): 5} (4);
+  \draw[->, thick] (4) -- node[below right, scale=0.9] {(4,5): 3} (5);
+\end{tikzpicture}
+\end{center}
+
+\textbf{b. Aplicar el CPM y comparar resultados}
+
+\vspace{0.3cm}
+
+Realizamos el pase hacia adelante para los Tiempos de Inicio Más Tempranos ($ES$) y el pase hacia atrás para los Tiempos de Terminación Más Tardíos ($LF$).
+
+\vspace{0.3cm}
+
+\begin{itemize}
+    \item \textbf{Pase hacia adelante (Max):}
+    \begin{align*}
+        ES_1 &= 0 \\
+        ES_2 &= ES_1 + t_{12} = 0 + 8 = 8 \\
+        ES_3 &= ES_1 + t_{13} = 0 + 4 = 4 \\
+        ES_4 &= \max(ES_2 + t_{24}, ES_3 + t_{34}) = \max(8+2, 4+5) = \max(10, 9) = 10 \\
+        ES_5 &= \max(ES_2 + t_{25}, ES_4 + t_{45}) = \max(8+10, 10+3) = \max(18, 13) = 18
+    \end{align*}
+    
+    La duración total del proyecto es de \textbf{18 u}.
+    
+    \item \textbf{Pase hacia atrás (Min):}
+    \begin{align*}
+        LF_5 &= 18 \\
+        LF_4 &= LF_5 - t_{45} = 18 - 3 = 15 \\
+        LF_3 &= LF_4 - t_{34} = 15 - 5 = 10 \\
+        LF_2 &= \min(LF_5 - t_{25}, LF_4 - t_{24}) = \min(18-10, 15-2) = \min(8, 13) = 8 \\
+        LF_1 &= \min(LF_2 - t_{12}, LF_3 - t_{13}) = \min(8-8, 10-4) = \min(0, 6) = 0
+    \end{align*}
+\end{itemize}
+
+\textbf{Cálculo de Holguras ($H = LF - ES - t$):}
+\begin{table}[H]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+\textbf{Actividad} & \textbf{Duración ($t$)} & $\mathbf{ES}$ & $\mathbf{LF}$ & \textbf{Holgura ($H$)} & \textbf{¿Crítica?} \\
+\midrule
+(1,2) & 8 & 0 & 8 & $8 - 0 - 8 = 0$ & \textbf{Sí} \\
+(1,3) & 4 & 0 & 10 & $10 - 0 - 4 = 6$ & No \\
+(2,4) & 2 & 8 & 15 & $15 - 8 - 2 = 5$ & No \\
+(2,5) & 10 & 8 & 18 & $18 - 8 - 10 = 0$ & \textbf{Sí} \\
+(3,4) & 5 & 4 & 15 & $15 - 4 - 5 = 6$ & No \\
+(4,5) & 3 & 10 & 18 & $18 - 10 - 3 = 5$ & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+\textbf{Ruta Crítica:} 1 $\rightarrow$ 2 $\rightarrow$ 5. (Duración: 18).
+
+\vspace{0.3cm}
+\textbf{c. Plantear el modelo lineal y encontrar la solución}\\
+Sea $x_i$ el tiempo de ocurrencia del evento $i$.
+
+\textbf{Función Objetivo:}
+\[ \text{Minimizar } Z = x_5 - x_1 \]
+
+\textbf{Sujeto a:}
+\begin{align*}
+    x_2 - x_1 &\ge 8 \\
+    x_3 - x_1 &\ge 4 \\
+    x_4 - x_2 &\ge 2 \\
+    x_5 - x_2 &\ge 10 \\
+    x_4 - x_3 &\ge 5 \\
+    x_5 - x_4 &\ge 3 \\
+    x_i &\ge 0 \quad \forall i \in \{1,2,3,4,5\}
+\end{align*}
+
+\textbf{Solución del Modelo:}
+Para minimizar $x_5 - x_1$, fijamos $x_1 = 0$. Resolviendo el sistema de inecuaciones en sus fronteras más restrictivas:
+$x_2 = 8$, $x_3 = 4$, $x_4 = \max(8+2, 4+5) = 10$, $x_5 = \max(8+10, 10+3) = 18$.
+El tiempo mínimo del proyecto es $Z = 18 - 0 = 18$. Esto \textbf{coincide exactamente} con el resultado del análisis CPM.
+
+\vspace{0.3cm}
+
+\textbf{d. Aplicar la distribución normal en dos situaciones}
+
+\vspace{0.3cm}
+
+\textit{Nota: Al ser tiempos deterministas, asumiremos para fines del análisis probabilístico que la varianza de la ruta crítica es $\sigma_p^2 = 4$ (Desviación estándar $\sigma_p = 2$). Sabemos que $\mu_p = 18$.}
+
+\vspace{0.3cm}
+
+\textbf{Situación 1: Probabilidad de terminar el proyecto en 20 días o menos.}
+Buscamos $P(T \le 20)$. Estandarizamos:
+\[ Z = \frac{T_s - \mu_p}{\sigma_p} = \frac{20 - 18}{2} = \frac{2}{2} = 1.00 \]
+Buscando $Z = 1.00$ en tablas de distribución normal estándar, el área a la izquierda es $0.8413$.
+\textbf{Resultado:} Hay un \textbf{84.13\%} de probabilidad de terminar en 20 días o menos.
+
+\vspace{0.3cm}
+
+\textbf{Situación 2: Probabilidad de terminar el proyecto en 15 días o menos.}
+Buscamos $P(T \le 15)$. Estandarizamos:
+\[ Z = \frac{T_s - \mu_p}{\sigma_p} = \frac{15 - 18}{2} = \frac{-3}{2} = -1.50 \]
+Buscando $Z = -1.50$ en tablas de distribución normal estándar, el área a la izquierda es $0.0668$.
+\textbf{Resultado:} Hay apenas un \textbf{6.68\%} de probabilidad de terminar en 15 días o menos.
 
 
 
