@@ -1,0 +1,1048 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+%--------------------------------------------------------------------------------
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% ---------------------------------------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+    
+
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textit{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Planteamientos de Programación Entera}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% CONTENIDO 
+\section{Programación Entera}
+
+
+\textbf{Identificación del problema y Objetivos}\\
+\textbf{Problema del Agente Viajero}. 
+Mario debe comenzar su recorrido en Basin, visitar exactamente una vez cada una de las cuatro ciudades donde residen sus clientes (Wald, Bon, Mena y Kiln) y finalmente retornar a Basin formando un solo circuito cerrado. 
+
+\vspace{3mm}
+
+\textbf{Objetivo:} Minimizar la distancia total (en millas) que recorre Mario al completar su ruta mensual.
+
+\vspace{3mm}
+
+\textbf{Representación Gráfica y Tabla de Distancias}\\
+Definimos el conjunto de nodos $V = \{1, 2, 3, 4, 5\}$, donde: 
+1: Basin, 2: Wald, 3: Bon, 4: Mena, 5: Kiln.
+
+\begin{center}
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \textbf{Tabla de Distancias (Millas)} \\[0.2cm]
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{lccccc}
+    \toprule
+    & \textbf{1. Basin} & \textbf{2. Wald} & \textbf{3. Bon} & \textbf{4. Mena} & \textbf{5. Kiln} \\
+    \midrule
+    \textbf{1. Basin} & 0 & 120 & 220 & 150 & 210 \\
+    \textbf{2. Wald}  & 120 & 0 & 80 & 110 & 130 \\
+    \textbf{3. Bon}   & 220 & 110 & 0 & 160 & 185 \\
+    \textbf{4. Mena}  & 150 & 110 & 160 & 0 & 190 \\
+    \textbf{5. Kiln}  & 210 & 130 & 185 & 190 & 0 \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{minipage} \hfill
+\begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1.1, auto, thick, node/.style={circle, draw, fill=cyan!10, font=\footnotesize\bfseries, minimum size=0.8cm}]
+      % Nodos en forma de pentágono para mejor distribución
+      \node[node] (1) at (90:2.0) {1};
+      \node[node] (2) at (18:2.0) {2};
+      \node[node] (3) at (306:2.0) {3};
+      \node[node] (4) at (234:2.0) {4};
+      \node[node] (5) at (162:2.0) {5};
+
+      % Aristas representativas
+      \draw[<->, color=gray!60] (1) -- node[above right, text=black, scale=0.7] {120} (2);
+      \draw[<->, color=gray!60] (1) -- node[right, text=black, scale=0.7, pos=0.7] {220} (3);
+      \draw[<->, color=gray!60] (1) -- node[left, text=black, scale=0.7, pos=0.7] {150} (4);
+      \draw[<->, color=gray!60] (1) -- node[above left, text=black, scale=0.7] {210} (5);
+      \draw[<->, color=gray!60] (2) -- node[right, text=black, scale=0.7] {80} (3);
+      \draw[<->, color=gray!60] (2) -- node[above, text=black, scale=0.7, pos=0.3] {110} (4);
+      \draw[<->, color=gray!60] (2) -- node[above, text=black, scale=0.7, pos=0.7] {130} (5);
+      \draw[<->, color=gray!60] (3) -- node[below, text=black, scale=0.7] {160} (4);
+      \draw[<->, color=gray!60] (3) -- node[above, text=black, scale=0.7, pos=0.7] {185} (5);
+      \draw[<->, color=gray!60] (4) -- node[left, text=black, scale=0.7] {190} (5);
+    \end{tikzpicture}
+\end{minipage}
+\end{center}
+
+\vspace{3mm}
+\textbf{Variables de decisión}\\
+Sea $c_{ij}$ la distancia desde la ciudad $i$ a la ciudad $j$. Se definen dos tipos de variables para modelar el enrutamiento:
+\begin{itemize}
+    \item \textbf{Variables Binarias de Asignación:} \\
+    $x_{ij} = 1$ si Mario viaja directamente desde la ciudad $i$ a la ciudad $j$; $0$ de lo contrario. \\
+    Donde $i, j \in \{1, 2, 3, 4, 5\}$ y $i \neq j$.
+    
+    \item \textbf{Variables Auxiliares Continuas (Lógica MTZ):} \\
+    $u_i =$ Posición de la ciudad $i$ en la secuencia del recorrido de Mario. \\
+    Donde $i \in \{2, 3, 4, 5\}$.
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Función objetivo}\\
+Buscamos minimizar la suma de las distancias de los arcos que son seleccionados para el viaje:
+\[ \text{Minimizar } Z = \sum_{i=1}^{5} \sum_{\substack{j=1 \\ j \neq i}}^{5} c_{ij} x_{ij} \]
+Expandiendo los costos explícitos de la tabla obtenemos la función objetivo completa:
+\begin{align*}
+\text{Min } Z = & \ 120x_{12} + 220x_{13} + 150x_{14} + 210x_{15} \\
+                & + 120x_{21} + 80x_{23} + 110x_{24} + 130x_{25} \\
+                & + 220x_{31} + 110x_{32} + 160x_{34} + 185x_{35} \\
+                & + 150x_{41} + 110x_{42} + 160x_{43} + 190x_{45} \\
+                & + 210x_{51} + 130x_{52} + 185x_{53} + 190x_{54}
+\end{align*}
+
+\vspace{3mm}
+\textbf{Restricciones}\\
+Para garantizar que la ruta forme un solo circuito válido y continuo, se plantean las siguientes restricciones:
+
+\begin{itemize}
+    \item \textbf{Restricciones de Salida} (Mario debe salir exactamente una vez de cada ciudad):
+    \[ \sum_{\substack{j=1 \\ j \neq i}}^{5} x_{ij} = 1 \quad \forall i \in \{1, 2, 3, 4, 5\} \]
+    
+    \item \textbf{Restricciones de Entrada} (Mario debe llegar exactamente una vez a cada ciudad):
+    \[ \sum_{\substack{i=1 \\ i \neq j}}^{5} x_{ij} = 1 \quad \forall j \in \{1, 2, 3, 4, 5\} \]
+    
+    \item \textbf{Restricciones de Eliminación de Subrutas (Miller-Tucker-Zemlin):} \\
+    Para evitar ciclos cerrados entre clientes que no incluyan a Basin (nodo 1):
+    \[ u_i - u_j + 5x_{ij} \le 4 \quad \forall i, j \in \{2, 3, 4, 5\}, \ i \neq j \]
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Uso de variables, lógica del modelo y presentación matemática}\\
+El modelo se completa definiendo la naturaleza de las variables y justificando su uso algorítmico:
+\begin{align*}
+    x_{ij} &\in \{0, 1\} \quad \forall i, j \in \{1, 2, 3, 4, 5\}, \ i \neq j \\
+    u_i &\ge 1 \quad \text{y entera} \quad \forall i \in \{2, 3, 4, 5\}
+\end{align*}
+
+\begin{nota}{(Miller-Tucker-Zemlin)}
+Las variables binarias $x_{ij}$ aseguran el grado de entrada y salida de cada nodo, pero matemáticamente podrían arrojar subciclos desconectados (por ejemplo, un viaje cerrado $1 \to 2 \to 1$ y otro $3 \to 4 \to 5 \to 3$). La incorporación de las variables enteras auxiliares $u_i$ garantiza que cada nodo reciba un número de secuencia estricto, rompiendo cualquier subruta que no incluya el origen y obligando a formar un único \textit{Tour} global.
+\end{nota}
+
+\newpage
+
+
+\textbf{Problema y Objetivos}\\
+\textbf{Problema de Asignación con Restricciones de Capacidad} 
+formulado mediante Programación Entera Binaria. 
+Se busca asignar estudiantes a cursos específicos 
+maximizando la satisfacción global, 
+respetando el cupo de cada salón y la carga académica exigida por alumno.
+
+\vspace{3mm}
+
+\textbf{Objetivo:} Maximizar la suma total de las calificaciones de preferencia de los 10 estudiantes al ser asignados exactamente a 2 cursos de los 6 disponibles, sin exceder la capacidad máxima de cada curso.
+
+\vspace{3mm}
+
+\textbf{Parámetros y Tablas de Datos}\\
+Definimos los siguientes conjuntos y parámetros:
+\begin{itemize}
+    \item $I = \{1, 2, \dots, 10\}$: Conjunto de estudiantes ($i$).
+    \item $J = \{1, 2, \dots, 6\}$: Conjunto de cursos ($j$).
+    \item $P_{ij}$: Calificación de preferencia del estudiante $i$ por el curso $j$.
+    \item $C_j$: Capacidad máxima de alumnos para el curso $j$.
+\end{itemize}
+
+\begin{center}
+\begin{minipage}{0.65\textwidth}
+    \centering
+    \textbf{Matriz de Preferencias ($P_{ij}$)} \\[0.2cm]
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{ccccccc}
+    \toprule
+    \textbf{Estudiante} & \textbf{Curso 1} & \textbf{Curso 2} & \textbf{Curso 3} & \textbf{Curso 4} & \textbf{Curso 5} & \textbf{Curso 6} \\
+    \midrule
+    \textbf{1} & 20 & 40 & 50 & 30 & 90 & 100 \\
+    \textbf{2} & 90 & 100 & 80 & 70 & 10 & 40 \\
+    \textbf{3} & 25 & 40 & 30 & 80 & 95 & 90 \\
+    \textbf{4} & 80 & 50 & 60 & 80 & 30 & 40 \\
+    \textbf{5} & 75 & 60 & 90 & 100 & 50 & 40 \\
+    \textbf{6} & 60 & 40 & 90 & 10 & 80 & 80 \\
+    \textbf{7} & 45 & 40 & 70 & 60 & 55 & 60 \\
+    \textbf{8} & 30 & 100 & 40 & 70 & 90 & 55 \\
+    \textbf{9} & 80 & 60 & 100 & 70 & 65 & 80 \\
+    \textbf{10} & 40 & 60 & 80 & 100 & 90 & 10 \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{minipage} \hfill
+\begin{minipage}{0.3\textwidth}
+    \centering
+    \textbf{Capacidades ($C_j$)} \\[0.2cm]
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{cc}
+    \toprule
+    \textbf{Curso} & \textbf{Capacidad} \\
+    \midrule
+    \textbf{1} & 6 \\
+    \textbf{2} & 8 \\
+    \textbf{3} & 5 \\
+    \textbf{4} & 5 \\
+    \textbf{5} & 6 \\
+    \textbf{6} & 5 \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{minipage}
+\end{center}
+
+\vspace{3mm}
+
+\textbf{Variables de decisión}\\
+Se requiere una variable que indique si un estudiante toma o no un curso.
+
+\[ 
+x_{ij} = 
+\begin{cases} 
+1 & \text{Si el estudiante } i \text{ es asignado al curso } j \\
+0 & \text{De lo contrario}
+\end{cases} 
+\]
+Donde $i \in \{1, 2, \dots, 10\}$ y $j \in \{1, 2, \dots, 6\}$. (Total: 60 variables binarias).
+
+\vspace{3mm}
+
+\textbf{Función objetivo}\\
+Se busca maximizar la preferencia total. Utilizando notación sumatoria para agrupar los 60 términos:
+\[ \text{Maximizar } Z = \sum_{i=1}^{10} \sum_{j=1}^{6} P_{ij} x_{ij} \]
+\textit{Forma expandida parcial:} 
+$Z = 20x_{1,1} + 40x_{1,2} + 50x_{1,3} + \dots + 90x_{10,5} + 10x_{10,6}$
+
+\vspace{3mm}
+\textbf{Restricciones}\\
+El sistema cuenta con dos familias de restricciones que gobiernan el modelo:
+
+\begin{itemize}
+    \item \textbf{Restricciones de carga académica (Demanda):} Cada estudiante $i$ debe seleccionar exactamente 2 cursos. 
+    \[ \sum_{j=1}^{6} x_{ij} = 2 \quad \forall i \in \{1, 2, \dots, 10\} \]
+    \textit{(Esto genera 10 restricciones, una por cada alumno. Ejemplo para el estudiante 1: $x_{1,1} + x_{1,2} + x_{1,3} + x_{1,4} + x_{1,5} + x_{1,6} = 2$)}
+
+    \item \textbf{Restricciones de cupo del profesorado (Oferta):} La cantidad de estudiantes asignados a un curso $j$ no debe superar su capacidad $C_j$.
+    \[ \sum_{i=1}^{10} x_{ij} \le C_j \quad \forall j \in \{1, 2, \dots, 6\} \]
+    Desglosando por curso:
+    \begin{align*}
+        \sum_{i=1}^{10} x_{i,1} &\le 6 \quad \text{(Curso 1)} \\
+        \sum_{i=1}^{10} x_{i,2} &\le 8 \quad \text{(Curso 2)} \\
+        \sum_{i=1}^{10} x_{i,3} &\le 5 \quad \text{(Curso 3)} \\
+        \sum_{i=1}^{10} x_{i,4} &\le 5 \quad \text{(Curso 4)} \\
+        \sum_{i=1}^{10} x_{i,5} &\le 6 \quad \text{(Curso 5)} \\
+        \sum_{i=1}^{10} x_{i,6} &\le 5 \quad \text{(Curso 6)}
+    \end{align*}
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+\begin{align*}
+    x_{ij} &\in \{0, 1\} \quad \forall i \in \{1, \dots, 10\}, \ \forall j \in \{1, \dots, 6\}
+\end{align*}
+
+\begin{nota}{}
+La naturaleza del problema exige estrictamente el uso de \textbf{Programación Entera Binaria Pura}. No es posible fraccionar la asistencia a un curso (un alumno no puede tomar el 50\% de un curso para obtener el 50\% de la calificación de preferencia). La variable $x_{ij}$ funciona como un interruptor lógico de asignación (1 = Asignado, 0 = No asignado), asegurando que el solver entregue horarios reales y discretos para los estudiantes de Mario School.
+\end{nota}
+
+\newpage
+
+\begin{ejercicio}{Problema c. Venta de manzanas de los agricultores}{ej3}
+Una pareja de agricultores está enviando a sus tres hijos al mercado a vender 90 manzanas, con el objetivo de educarlos acerca del dinero y los números. Mario, el mayor, lleva 50 manzanas; Luigi, el mediano, lleva 30; y Peach, la más pequeña, sólo lleva 10. Los padres han estipulado las reglas: (a) El precio de venta es de 1 moneda por siete manzanas o de 3 monedas por una manzana, o una combinación de los dos precios. (b) Cada niño debe ejercer ambas opciones del precio de venta. (c) Cada uno de los tres niños debe regresar exactamente con la misma cantidad de dinero. (d) Cada niño debe regresar con un número par de monedas (sin centavos). (e) La cantidad recibida por cada uno debe ser la mayor posible bajo las condiciones estipuladas. Dado que los tres hijos pueden vender todo lo que tienen, ¿cómo pueden satisfacer las condiciones de sus padres? Plantear el modelo entero.
+\end{ejercicio}
+
+\vspace{3mm}
+\textbf{Identificación del problema y Objetivos}\\
+\textbf{Problema de Optimización Entera con Restricciones Diofánticas}. El sistema debe encontrar una combinación de ventas (al por mayor y al por menor) para cada niño que satisfaga inventarios fijos y condiciones estrictas de igualdad financiera y paridad.
+
+\vspace{3mm}
+
+\textbf{Objetivo:} Maximizar la ganancia común de los tres hermanos, sujeta a que dicha ganancia sea la misma para todos y cumpla con las reglas de venta establecidas.
+
+\vspace{3mm}
+\textbf{Variables de decisión}\\
+Definimos el conjunto de los tres hijos como $I = \{M, L, P\}$ (Mario, Luigi y Peach).
+\begin{itemize}
+    \item $x_i = $ Cantidad de lotes de 7 manzanas vendidos por el niño $i$ (a 1 moneda el lote).
+    \item $y_i = $ Cantidad de manzanas sueltas vendidas por el niño $i$ (a 3 monedas cada una).
+    \item $W = $ Cantidad de dinero (monedas) con la que regresa cada niño.
+    \item $k = $ Variable entera auxiliar para garantizar que $W$ sea un número par.
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Función objetivo}\\
+El objetivo es que la cantidad recibida por cada uno sea la mayor posible. Por lo tanto, se maximiza la variable de ganancia común $W$:
+\[ \text{Maximizar } Z = W \]
+
+\vspace{3mm}
+\textbf{Restricciones}\\
+El modelo se rige por cuatro grupos de restricciones según las reglas de los padres:
+
+\begin{itemize}
+    \item \textbf{Restricciones de inventario (venta total):} La suma de las manzanas vendidas en lotes ($7x_i$) y sueltas ($y_i$) debe igualar el inventario inicial de cada niño.
+    \begin{align*}
+        7x_M + y_M &= 50 \quad \text{(Manzanas de Mario)} \\
+        7x_L + y_L &= 30 \quad \text{(Manzanas de Luigi)} \\
+        7x_P + y_P &= 10 \quad \text{(Manzanas de Peach)}
+    \end{align*}
+
+    \item \textbf{Restricciones de ganancia (Regla c):} El ingreso generado por cada niño debe ser exactamente igual a la variable común $W$.
+    \begin{align*}
+        1x_M + 3y_M &= W \quad \text{(Ingreso de Mario)} \\
+        1x_L + 3y_L &= W \quad \text{(Ingreso de Luigi)} \\
+        1x_P + 3y_P &= W \quad \text{(Ingreso de Peach)}
+    \end{align*}
+
+    \item \textbf{Restricciones lógicas de venta (Regla b):} Cada niño debe ejercer ambas opciones de precio de venta (vender al menos un lote de 7 y al menos una suelta).
+    \[ x_i \ge 1, \quad y_i \ge 1 \quad \forall i \in \{M, L, P\} \]
+
+    \item \textbf{Restricciones de paridad (Regla d):} El número total de monedas ($W$) debe ser par.
+    \[ W = 2k \]
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_i, y_i &\in \mathbb{Z}^+ \quad \forall i \in \{M, L, P\} \\
+    W, k &\in \mathbb{Z}^+ 
+\end{align*}
+
+\begin{nota}{Análisis del comportamiento del modelo}
+La formulación obliga al uso de \textbf{Programación Entera Pura}. Al requerir que $x_P \ge 1$ y $y_P \ge 1$, el inventario de Peach ($7x_P + y_P = 10$) obliga matemáticamente a que la única solución factible para ella sea $x_P = 1$ y $y_P = 3$. Esto restringe de inmediato su ganancia a $W = 1(1) + 3(3) = 10$ monedas. Como $W$ debe ser igual para todos y 10 es un número par ($k=5$), el modelo está perfectamente acotado y las variables de Mario y Luigi se ajustarán para alcanzar exactamente 10 monedas.
+\end{nota}
+
+\newpage
+
+\begin{ejercicio}{Problema d. Ubicación y Producción en Luigi S.A. C.O.}{ej4}
+La empresa Luigi S.A. C.O. fabrica tres productos cuyos requerimientos diarios de mano de obra y de materia prima se proporcionan en la siguiente tabla:
+
+\begin{center}
+\resizebox{0.8\textwidth}{!}{
+\begin{tabular}{ccc}
+\toprule
+\textbf{Producto} & \textbf{Mano de obra diaria requerida (horas/unidad)} & \textbf{Materia prima diaria requerida (libra/unidad)} \\
+\midrule
+1 & 3 & 4 \\
+2 & 4 & 3 \\
+3 & 5 & 6 \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Las utilidades por unidad de los tres productos son 35, 30, y 22 monedas, respectivamente. Luigi tiene dos opciones para ubicar su planta. Las dos ubicaciones difieren primordialmente en la disponibilidad de mano de obra y de materia prima, según se muestra en la siguiente tabla:
+
+\begin{center}
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{ccc}
+\toprule
+\textbf{Ubicación} & \textbf{Mano de obra diaria disponible (horas)} & \textbf{Materia prima diaria disponible (libras)} \\
+\midrule
+1 & 100 & 100 \\
+2 & 90 & 120 \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+Plantear el modelo entero.
+\end{ejercicio}
+
+\vspace{3mm}
+
+\textbf{Problema y Objetivos}
+
+Este caso corresponde a un \textbf{Modelo de Programación Entera Mixta (Binaria y Discreta)}. El problema exige decidir el volumen de producción óptimo de tres artículos distintos, condicionado a la elección de una única sede para la planta, la cual define las restricciones de capacidad.
+
+\textbf{Objetivo:} Maximizar la utilidad total diaria obtenida por la venta de los tres productos, seleccionando simultáneamente la ubicación de la planta que ofrezca la disponibilidad de recursos más favorable para dicha mezcla.
+
+\vspace{3mm}
+
+\textbf{Variables de decisión}
+
+Se definen dos familias de variables (cuantitativas y de decisión lógica):
+\begin{itemize}
+    \item \textbf{Variables de Producción (Enteras):} \\
+    $x_i = $ Cantidad de unidades a fabricar diariamente del producto $i$. \\
+    Donde $i \in \{1, 2, 3\}$.
+    
+    \item \textbf{Variables de Ubicación (Binarias):} \\
+    $y_j = 
+    \begin{cases} 
+    1 & \text{Si se decide ubicar la planta en la locación } j \\
+    0 & \text{De lo contrario}
+    \end{cases}$ \\
+    Donde $j \in \{1, 2\}$.
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Función objetivo}
+
+Se busca maximizar las ganancias generadas por la fabricación de los productos. Puesto que la utilidad es independiente de la ubicación de la planta, la función se define exclusivamente en términos de $x_i$:
+\[ \text{Maximizar } Z = 35x_1 + 30x_2 + 22x_3 \]
+
+\vspace{3mm}
+\textbf{Modelación de restricciones}
+
+El sistema está limitado por los recursos disponibles, los cuales dependen directamente de la planta que se decida abrir. Modelamos esto vinculando los lados derechos (RHS) de las inecuaciones con las variables binarias:
+
+\begin{itemize}
+    \item \textbf{Restricción de Mano de Obra (horas):} El consumo total no puede exceder las horas disponibles en la planta elegida.
+    \[ 3x_1 + 4x_2 + 5x_3 \le 100y_1 + 90y_2 \]
+
+    \item \textbf{Restricción de Materia Prima (libras):} El consumo total no puede exceder las libras disponibles en la planta elegida.
+    \[ 4x_1 + 3x_2 + 6x_3 \le 100y_1 + 120y_2 \]
+
+    \item \textbf{Restricción de exclusividad de ubicación:} Luigi solo abrirá una planta, por lo que las variables binarias son mutuamente excluyentes.
+    \[ y_1 + y_2 = 1 \]
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_1, x_2, x_3 &\ge 0 \quad \text{y enteras} \\
+    y_1, y_2 &\in \{0, 1\}
+\end{align*}
+
+\begin{nota}{Lógica del recurso condicionado}
+Al establecer $y_1 + y_2 = 1$, obligamos algorítmicamente a que una de las variables binarias sea 1 y la otra 0. Si, por ejemplo, el solver determina que $y_1 = 1$ y $y_2 = 0$, las inecuaciones colapsan automáticamente a los límites de la Ubicación 1:
+\begin{center}
+$3x_1 + 4x_2 + 5x_3 \le 100(1) + 90(0) \implies 3x_1 + 4x_2 + 5x_3 \le 100$ \\
+$4x_1 + 3x_2 + 6x_3 \le 100(1) + 120(0) \implies 4x_1 + 3x_2 + 6x_3 \le 100$
+\end{center}
+Esta técnica es vital en Programación Entera para activar o desactivar restricciones de capacidad de forma dinámica sin romper la linealidad del modelo. Además, exigimos que las variables $x_i$ sean enteras puras dado que representan unidades de "productos" discretos.
+\end{nota}
+
+\newpage
+
+\begin{ejercicio}{Problema e. Producción con condición mínima en planta de Mario}{ej5}
+Mario posee una planta donde se fabrican tres productos. Los requisitos de mano de obra y materias primas de cada uno se ven en la siguiente tabla:
+
+\begin{center}
+\resizebox{0.75\textwidth}{!}{
+\begin{tabular}{ccc}
+\toprule
+\textbf{Producto} & \textbf{Mano de obra requerida (horas/unidad)} & \textbf{Materia prima diaria requerida (libras/unidad)} \\
+\midrule
+1 & 3 & 4 \\
+2 & 4 & 3 \\
+3 & 5 & 6 \\
+\midrule
+\textbf{Disponibilidad diaria} & \textbf{100} & \textbf{100} \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Las utilidades por unidad para los tres productos son de 25, 30 y 45 monedas, respectivamente. Si se ha de fabricar el producto 3, su nivel de producción mínimo debe ser 5 unidades diarias. Plantear el modelo entero mixto.
+\end{ejercicio}
+
+\vspace{3mm}
+\textbf{Problema y Objetivos}
+\textbf{Programación Entera Mixta (PEM)}. Consiste en un problema clásico de mezcla de producción sujeto a restricciones de recursos limitados, pero al que se le añade una restricción lógica condicional de umbral mínimo para uno de sus artículos.
+
+\textbf{Objetivo:} Maximizar la utilidad total diaria de la planta determinando el número óptimo de unidades a fabricar de cada producto, garantizando que el producto 3 cumpla con su cuota mínima en caso de ser fabricado.
+
+\vspace{3mm}
+\textbf{Variables de decisión}
+
+Definimos variables cuantitativas para la producción y una variable lógica para controlar el estado del producto 3:
+
+\begin{itemize}
+    \item \textbf{Variables de Producción (Enteras):} \\
+    $x_i = $ Número de unidades a fabricar diariamente del producto $i$, donde $i \in \{1, 2, 3\}$.
+    
+    \item \textbf{Variable Indicadora (Binaria):} \\
+    $y_3 = 
+    \begin{cases} 
+    1 & \text{Si se decide fabricar el producto 3 } (x_3 > 0) \\
+    0 & \text{Si no se fabrica el producto 3 } (x_3 = 0)
+    \end{cases}$
+\end{itemize}
+\vspace{3mm}
+
+\textbf{Función objetivo}
+
+Se busca maximizar las ganancias generadas por las unidades producidas de los tres artículos:
+\[ \text{Maximizar } Z = 25x_1 + 30x_2 + 45x_3 \]
+
+\vspace{3mm}
+\textbf{Restricciones}
+Las restricciones se dividen en límites de capacidad física y lógicas de producción:
+
+\begin{itemize}
+    \item \textbf{Restricción de Mano de Obra (horas):} 
+    \[ 3x_1 + 4x_2 + 5x_3 \le 100 \]
+
+    \item \textbf{Restricción de Materia Prima (libras):} 
+    \[ 4x_1 + 3x_2 + 6x_3 \le 100 \]
+
+    \item \textbf{Condición de producción mínima (Producto 3):} Si se decide fabricarlo ($y_3 = 1$), la producción debe ser al menos 5. Si no se fabrica ($y_3 = 0$), esta inecuación se vuelve $x_3 \ge 0$.
+    \[ x_3 \ge 5y_3 \]
+
+    \item \textbf{Condición de activación y límite superior (Técnica de la Gran M):} Para forzar a $x_3$ a ser 0 cuando $y_3 = 0$, necesitamos una cota superior $M$. Calculamos una "Gran M" ajustada evaluando el máximo de $x_3$ que los recursos permiten fabricar: por mano de obra $\lfloor 100/5 \rfloor = 20$, por materia prima $\lfloor 100/6 \rfloor = 16$. Por tanto, el máximo teórico de $x_3$ es 16. Elegimos $M = 16$.
+    \[ x_3 \le 16y_3 \]
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_1, x_2, x_3 &\ge 0 \quad \text{y enteras} \\
+    y_3 &\in \{0, 1\}
+\end{align*}
+
+\begin{nota}{}
+La combinación de las inecuaciones $5y_3 \le x_3 \le 16y_3$ modela matemáticamente el requerimiento "si se fabrica, al menos deben ser 5". 
+\begin{itemize}
+    \item Si el solver asigna $y_3 = 0$, el intervalo colapsa a $0 \le x_3 \le 0$, forzando a $x_3 = 0$ (no se produce).
+    \item Si el solver asigna $y_3 = 1$, el intervalo se abre a $5 \le x_3 \le 16$, permitiendo que el solver busque el punto óptimo respetando el mínimo exigido de 5 unidades.
+\end{itemize}
+Esta es la justificación de por qué el modelo es Entero Mixto, combinando variables enteras con decisiones lógicas booleanas.
+\end{nota}
+
+\newpage
+
+\begin{ejercicio}{Problema f. Plantas de Tratamiento en el Reinado de Peach}{ej6}
+El reinado de Peach va a construir plantas de tratamiento de agua debido a la contaminación excesiva del río Peach. Se seleccionaron tres sitios (1, 2 y 3). Peach está interesada en controlar los niveles de contaminación de dos contaminantes (1 y 2). La legislatura del reinado requiere que se eliminen del río por lo menos 80 000 toneladas del contaminante 1 y por lo menos 50 000 toneladas del contaminante 2. La información pertinente a este problema se muestra en la siguiente tabla. Formule un modelo entero que minimice el costo al cumplir con los objetivos de la legislatura del reinado.
+
+\begin{center}
+\resizebox{0.95\textwidth}{!}{
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Lugar} & \textbf{Costo de la construcción} & \textbf{Costo de tratar una} & \multicolumn{2}{c}{\textbf{Cantidad eliminada por tonelada de agua}} \\
+\cmidrule(lr){4-5}
+& \textbf{de la planta (monedas)} & \textbf{tonelada de agua (monedas)} & \textbf{Contaminante 1} & \textbf{Contaminante 2} \\
+\midrule
+1 & 100 000 & 20 & 0.40 & 0.30 \\
+2 & 60 000 & 30 & 0.25 & 0.20 \\
+3 & 40 000 & 40 & 0.20 & 0.25 \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\end{ejercicio}
+
+\vspace{3mm}
+\textbf{Problema y Objetivos}
+
+Este es un modelo de \textbf{Programación Entera Mixta (PEM)} clasificado específicamente como un \textbf{Problema de Cargos Fijos}. El sistema debe decidir cuáles plantas construir (incurriendo en un costo fijo penalizador) y qué volumen de agua tratar en cada una (costo variable lineal).
+
+\textbf{Objetivo:} Minimizar el costo total (suma de los costos de construcción y los costos operativos de tratamiento) asegurando que se cumplan las metas ecológicas de remoción de contaminantes impuestas por la legislatura.
+
+\vspace{3mm}
+
+\textbf{Variables de decisión}
+
+Para separar la decisión de apertura del nivel de operación, definimos dos conjuntos de variables:
+
+\begin{itemize}
+    \item \textbf{Variables de Operación (Enteras):} \\
+    $x_i = $ Cantidad de toneladas de agua a tratar en la planta ubicada en el sitio $i$. \\
+    Donde $i \in \{1, 2, 3\}$.
+    
+    \item \textbf{Variables de Construcción (Binarias):} \\
+    $y_i = 
+    \begin{cases} 
+    1 & \text{Si se construye la planta de tratamiento en el sitio } i \\
+    0 & \text{De lo contrario}
+    \end{cases}$
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Función objetivo}
+
+Se busca minimizar el costo total conjunto. Los costos fijos se multiplican por la variable binaria (solo se cobran si la planta se abre) y los costos variables se multiplican por las toneladas tratadas:
+\[ \text{Minimizar } Z = 100000y_1 + 60000y_2 + 40000y_3 + 20x_1 + 30x_2 + 40x_3 \]
+
+\vspace{3mm}
+\textbf{Restricciones}
+
+El modelo cuenta con restricciones de demanda (metas ecológicas) y restricciones lógicas de activación:
+
+\begin{itemize}
+    \item \textbf{Meta de remoción del Contaminante 1:} La suma de las toneladas removidas por cada planta debe ser al menos 80,000.
+    \[ 0.40x_1 + 0.25x_2 + 0.20x_3 \ge 80000 \]
+
+    \item \textbf{Meta de remoción del Contaminante 2:} La suma de las toneladas removidas por cada planta debe ser al menos 50,000.
+    \[ 0.30x_1 + 0.20x_2 + 0.25x_3 \ge 50000 \]
+
+    \item \textbf{Restricciones de Cargo Fijo (Lógica de Activación):} No se puede tratar agua en una planta que no ha sido construida. Usamos la técnica de la Gran M: $x_i \le M_i y_i$. \\
+    Para que el modelo sea computacionalmente eficiente, calculamos una $M_i$ específica para cada planta, asumiendo el caso extremo donde una sola planta debe cumplir con la cuota más restrictiva:
+    \begin{itemize}
+        \item Planta 1: Para el contam. 1 necesita $80000/0.40 = 200,000$ ton. Para el 2 necesita $50000/0.30 = 166,667$ ton. $\implies M_1 = 200,000$.
+        \item Planta 2: Para el contam. 1 necesita $80000/0.25 = 320,000$ ton. Para el 2 necesita $50000/0.20 = 250,000$ ton. $\implies M_2 = 320,000$.
+        \item Planta 3: Para el contam. 1 necesita $80000/0.20 = 400,000$ ton. Para el 2 necesita $50000/0.25 = 200,000$ ton. $\implies M_3 = 400,000$.
+    \end{itemize}
+    Esto nos arroja las siguientes inecuaciones condicionales:
+    \begin{align*}
+        x_1 &\le 200000y_1 \\
+        x_2 &\le 320000y_2 \\
+        x_3 &\le 400000y_3 
+    \end{align*}
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_1, x_2, x_3 &\ge 0 \quad \text{y enteras (toneladas de agua)} \\
+    y_1, y_2, y_3 &\in \{0, 1\}
+\end{align*}
+
+\begin{nota}{Costos Fijos}
+Las desigualdades $x_i \le M_i y_i$ son el corazón de este problema. Si el solver determina que $y_1 = 0$ (no construir la planta 1 para ahorrar 100,000 monedas), la restricción fuerza a que $x_1 \le 0$, impidiendo tratar agua allí. Por el contrario, si $y_1 = 1$, la restricción se relaja a $x_1 \le 200,000$, lo cual es una cota superior suficientemente holgada para permitir la operación normal de la planta pagando el costo de construcción en la función objetivo.
+\end{nota}
+
+\newpage
+
+\begin{ejercicio}{Problema g. Plan de Producción de Luigi con Costo Fijo}{ej7}
+Un fabricante llamado Luigi puede vender el producto 1 y obtener una utilidad de 2 monedas por unidad y del producto 2, una utilidad de 5 monedas por unidad. Se necesitan 3 unidades de materia prima para elaborar una unidad del producto 1 y 6 unidades de materia prima para elaborar una unidad del producto 2. Se dispone de un total de 120 unidades de materia prima. Si se elabora cualquier cantidad del producto 1 se incurre en un costo de preparación de 20 monedas. Plantee un modelo entero para maximizar las utilidades.
+\end{ejercicio}
+
+\vspace{3mm}
+\textbf{Problema y Objetivos}
+
+Este es un \textbf{Problema de Producción con Cargo Fijo} modelado mediante Programación Entera Mixta (PEM). La decisión central implica equilibrar el consumo de materia prima entre dos productos, considerando que uno de ellos exige un pago único de preparación para iniciar su manufactura.
+
+\textbf{Objetivo:} Maximizar la utilidad neta total, calculada como los ingresos por las unidades vendidas menos el costo fijo de preparación (si este aplica).
+
+\vspace{3mm}
+\textbf{Variables de decisión}
+
+\begin{itemize}
+    \item \textbf{Variables de Producción (Enteras):} \\
+    $x_1 = $ Cantidad de unidades a elaborar del producto 1. \\
+    $x_2 = $ Cantidad de unidades a elaborar del producto 2.
+    
+    \item \textbf{Variable de Preparación (Binaria):} \\
+    $y_1 = 
+    \begin{cases} 
+    1 & \text{Si se decide producir el producto 1 } (x_1 > 0) \\
+    0 & \text{De lo contrario } (x_1 = 0)
+    \end{cases}$
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Función objetivo}
+
+La utilidad neta se define como las ganancias por unidad menos el costo fijo (que se multiplica por la variable binaria para que solo se reste si $y_1 = 1$):
+\[ \text{Maximizar } Z = 2x_1 + 5x_2 - 20y_1 \]
+
+\vspace{3mm}
+\textbf{Rrestricciones}
+
+El modelo está sujeto a la disponibilidad de inventario y a la lógica de activación del costo fijo:
+
+\begin{itemize}
+    \item \textbf{Restricción de Materia Prima:} El consumo total no puede superar las 120 unidades disponibles.
+    \[ 3x_1 + 6x_2 \le 120 \]
+
+    \item \textbf{Condición Lógica de Costo Fijo (Técnica Gran M):} El producto 1 solo puede fabricarse si se paga su costo de preparación ($y_1 = 1$). Calculamos la "Gran M" evaluando la capacidad máxima de producción del producto 1. Si dedicáramos toda la materia prima a este producto, podríamos fabricar $120 / 3 = 40$ unidades. Por tanto, fijamos la cota ajustada en $M = 40$.
+    \[ x_1 \le 40y_1 \]
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_1, x_2 &\ge 0 \quad \text{y enteras} \\
+    y_1 &\in \{0, 1\}
+\end{align*}
+
+\begin{nota}{}
+La inecuación $x_1 \le 40y_1$ conecta la variable entera con la decisión lógica binaria. Si el modelo matemático intenta hacer $x_1 > 0$ (por ejemplo, asignar $x_1 = 10$), obligatoriamente debe forzar $y_1 = 1$ para que la desigualdad siga siendo válida ($10 \le 40(1)$). Al activar $y_1 = 1$, la función objetivo automáticamente restará las 20 monedas de preparación. Si se decide no producir ($y_1 = 0$), entonces $x_1 \le 0$, lo que prohíbe la fabricación de dicho artículo y evita el cobro fijo.
+\end{nota}
+
+\newpage
+
+\begin{ejercicio}{Problema h. Localización de Bodegas y Distribución}{ej8}
+Una compañía planea abrir unas bodegas en 4 ciudades: Reinado Peach, Reinado Pingüino, Reinado Champiñón y Jardín del Vapor. Desde cada bodega se pueden embarcar 100 unidades por semana. El costo fijo por semana por mantener en operación cada bodega es de 400 monedas en Reinado Peach, 500 monedas para Reinado Pingüino, 300 monedas para Reinado Champiñón y 150 monedas para Jardín del Vapor. La región 1 del país requiere 80 unidades por semana, la región 2 demanda 70 unidades por semana y la región 3 necesita 40 unidades por semana. Los costos (sin olvidar los costos de producción y embarque) por enviar una unidad desde una bodega a una región se señala en la tabla siguiente:
+
+
+Se desea cumplir con las demandas semanales a un costo mínimo, sujeto a la información precedente y a las restricciones siguientes:
+1. Si se abre la bodega de Reinado Peach, entonces se debe abrir la bodega de Reinado Pingüino.
+2. Es posible abrir a lo más dos bodegas.
+3. Se tiene que abrir la bodega de Jardín del Vapor o del Reinado Pingüino.
+Formule un modelo entero que se pueda usar para minimizar los costos semanales de cumplir con la demanda.
+\end{ejercicio}
+
+\vspace{3mm}
+\textbf{Problema y Objetivos}
+
+Este es un \textbf{Problema de Localización de Instalaciones (Facility Location Problem)} formulado mediante Programación Entera Mixta (PEM). El modelo debe decidir estratégicamente qué bodegas abrir (cargos fijos) y cuántas unidades enviar desde estas hacia las distintas regiones (costos de transporte), cumpliendo con reglas lógicas de negocio.
+
+\textbf{Objetivo:} Minimizar el costo total semanal (suma de los costos fijos de apertura de bodegas y los costos variables de transporte) satisfaciendo la demanda de cada región sin exceder la capacidad de las instalaciones abiertas.
+
+\vspace{3mm}
+\textbf{Variables de decisión}
+
+Definimos dos conjuntos de índices: $i \in \{1, 2, 3, 4\}$ para las bodegas (Peach, Pingüino, Champiñón, Vapor) y $j \in \{1, 2, 3\}$ para las regiones de demanda.
+\begin{itemize}
+    \item \textbf{Variables de Transporte (Enteras):} \\
+    $x_{ij} = $ Cantidad de unidades enviadas desde la bodega $i$ a la región $j$.
+    
+    \item \textbf{Variables de Apertura (Binarias):} \\
+    $y_i = 
+    \begin{cases} 
+    1 & \text{Si se decide abrir y operar la bodega } i \\
+    0 & \text{De lo contrario}
+    \end{cases}$
+\end{itemize}
+
+\vspace{3mm}
+
+\textbf{Función objetivo}
+
+Se minimiza la suma de los costos fijos y los costos de envío:
+\begin{align*}
+\text{Min } Z = & \ 400y_1 + 500y_2 + 300y_3 + 150y_4 \\
+                & + 20x_{11} + 40x_{12} + 50x_{13} \\
+                & + 48x_{21} + 15x_{22} + 26x_{23} \\
+                & + 26x_{31} + 35x_{32} + 18x_{33} \\
+                & + 24x_{41} + 50x_{42} + 35x_{43}
+\end{align*}
+
+\vspace{3mm}
+\textbf{Modelación de restricciones}
+
+El sistema contempla restricciones de demanda, capacidad y un bloque de proposiciones lógicas:
+
+\begin{itemize}
+    \item \textbf{Restricciones de Demanda:} Cada región $j$ debe recibir exactamente lo que requiere.
+    \begin{align*}
+        x_{11} + x_{21} + x_{31} + x_{41} &= 80 \quad \text{(Región 1)} \\
+        x_{12} + x_{22} + x_{32} + x_{42} &= 70 \quad \text{(Región 2)} \\
+        x_{13} + x_{23} + x_{33} + x_{43} &= 40 \quad \text{(Región 3)}
+    \end{align*}
+
+    \item \textbf{Restricciones de Capacidad (Técnica Gran M):} Una bodega no puede enviar mercancía si no se abre ($y_i = 0$) y, si se abre, no puede exceder su capacidad máxima de 100 unidades ($M = 100$).
+    \begin{align*}
+        x_{11} + x_{12} + x_{13} &\le 100y_1 \quad \text{(Bodega 1)} \\
+        x_{21} + x_{22} + x_{23} &\le 100y_2 \quad \text{(Bodega 2)} \\
+        x_{31} + x_{32} + x_{33} &\le 100y_3 \quad \text{(Bodega 3)} \\
+        x_{41} + x_{42} + x_{43} &\le 100y_4 \quad \text{(Bodega 4)}
+    \end{align*}
+
+    \item \textbf{Restricciones Lógicas de Negocio:}
+    \begin{align*}
+        y_1 &\le y_2 \quad \text{(Condición 1: Si Peach [1], entonces Pingüino [2])} \\
+        y_1 + y_2 + y_3 + y_4 &\le 2 \quad \text{(Condición 2: Abrir a lo más dos bodegas)} \\
+        y_4 + y_2 &\ge 1 \quad \text{(Condición 3: Abrir Vapor [4] o Pingüino [2])}
+    \end{align*}
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_{ij} &\ge 0 \quad \text{y enteras } \forall i \in \{1, 2, 3, 4\}, j \in \{1, 2, 3\} \\
+    y_i &\in \{0, 1\} \quad \forall i \in \{1, 2, 3, 4\}
+\end{align*}
+
+\begin{nota}{}
+La traducción de condiciones booleanas a inecuaciones lineales es una herramienta poderosa en la Programación Entera:
+\begin{itemize}
+    \item La implicación \textbf{Si A $\implies$ B} se modela como $y_A \le y_B$. Si $y_1 = 1$, fuerza a que $y_2 \ge 1$ (es decir, $y_2 = 1$). Si $y_1 = 0$, $y_2$ es libre de ser 0 o 1.
+    \item La disyunción inclusiva \textbf{A o B} se modela como $y_A + y_B \ge 1$. Esto asegura que al menos una de las dos bodegas (o ambas) sea abierta para cumplir con la regla 3, bloqueando la posibilidad de que $(y_2 = 0 \land y_4 = 0)$.
+\end{itemize}
+Adicionalmente, se garantiza la factibilidad del modelo ya que la demanda total (190 unidades) puede ser cubierta por las 2 bodegas máximas permitidas (200 unidades de capacidad combinada).
+\end{nota}
+
+
+\newpage
+
+
+\begin{ejercicio}{Problema i. Mezcla de productos en Peach y Asociados}{ej9}
+La división de investigación y desarrollo de la compañía Peach y Asociados ha venido desarrollando cuatro líneas posibles de nuevos productos. La administración debe ahora tomar una decisión sobre cuáles de estos cuatro productos producir y a qué niveles. Ha pedido al departamento de IO que formule un modelo de programación matemática para encontrar la mezcla de productos más redituable. 
+
+La puesta en marcha de la producción de cualquier producto se asocia a un costo sustancial, proporcionado en el primer renglón de la tabla. El objetivo de la administración es encontrar la mezcla de productos que maximice la ganancia total (ingreso neto total menos costos fijos).
+
+\begin{center}
+\resizebox{0.75\textwidth}{!}{
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{4}{c}{\textbf{Producto}} \\
+\cmidrule(lr){2-5}
+& \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} \\
+\midrule
+\textbf{Costo fijo} & \$50 000 & \$40 000 & \$70 000 & \$60 000 \\
+\textbf{Ingreso marginal} & \$70 & \$60 & \$90 & \$80 \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Defina las variables de decisión $x_1, x_2, x_3$ y $x_4$ como los niveles de producción de los productos 1, 2, 3 y 4. Por políticas de la empresa, la gerencia ha impuesto las siguientes restricciones sobre estas variables:
+1. A lo más dos de estos productos deben producirse.
+2. Cualquiera de los productos 3 o 4 se puede producir sólo si se produce el producto 1 o el 2.
+3. O bien
+Introduzca variables binarias auxiliares para formular un modelo entero puro mixto para este problema.
+\end{ejercicio}
+
+\vspace{3mm}
+\textbf{Problema y Objetivos}
+
+Este es un clásico \textbf{Problema de Cargos Fijos (Fixed Charge Problem)} que se modela mediante \textbf{Programación Entera Mixta (PEM)}. Requiere decidir simultáneamente qué productos lanzar (incurriendo en un costo fijo de preparación) y en qué cantidad fabricarlos (generando un ingreso marginal lineal).
+
+\textbf{Objetivo:} Maximizar la utilidad total, calculada como la suma de los ingresos marginales por producto menos los costos fijos de puesta en marcha asociados a las líneas activadas.
+
+\vspace{3mm}
+\textbf{Variables de decisión}
+
+Definimos variables cuantitativas para el nivel de producción y variables lógicas para la activación de las líneas:
+\begin{itemize}
+    \item \textbf{Variables de Producción (Continuas o Enteras):} \\
+    $x_i = $ Nivel de producción del producto $i$. \\
+    Donde $i \in \{1, 2, 3, 4\}$.
+    
+    \item \textbf{Variables de Activación (Binarias):} \\
+    $y_i = 
+    \begin{cases} 
+    1 & \text{Si se decide producir el producto } i \ (x_i > 0) \\
+    0 & \text{De lo contrario } (x_i = 0)
+    \end{cases}$
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Función objetivo}
+
+La función a maximizar vincula el ingreso de cada unidad producida y deduce el costo fijo solo si la variable binaria correspondiente se activa:
+\begin{align*}
+\text{Maximizar } Z = & \ 70x_1 + 60x_2 + 90x_3 + 80x_4 \\
+                      & - 50000y_1 - 40000y_2 - 70000y_3 - 60000y_4
+\end{align*}
+
+\vspace{3mm}
+\textbf{Modelación de restricciones}
+
+Implementamos las restricciones lógicas impuestas por la gerencia y las restricciones de enlace (Big M):
+
+\begin{itemize}
+    \item \textbf{Límite de líneas de producción (Regla 1):} Se permite fabricar un máximo de dos productos distintos.
+    \[ y_1 + y_2 + y_3 + y_4 \le 2 \]
+
+    \item \textbf{Condicionante de producción (Regla 2):} La fabricación del producto 3 o del producto 4 exige que la línea 1 o la línea 2 estén operando.
+    \begin{align*}
+        y_3 &\le y_1 + y_2 \\
+        y_4 &\le y_1 + y_2
+    \end{align*}
+
+    \item \textbf{Restricciones de Cargo Fijo (Técnica Gran M):} Vinculamos las variables de producción con las de activación. Dado que el problema no especifica un límite máximo de capacidad, utilizamos una constante $M$ suficientemente grande.
+    \begin{align*}
+        x_1 &\le M y_1 \\
+        x_2 &\le M y_2 \\
+        x_3 &\le M y_3 \\
+        x_4 &\le M y_4
+    \end{align*}
+\end{itemize}
+
+\vspace{3mm}
+\textbf{Uso de variables, lógica del modelo y presentación matemática}
+
+\begin{align*}
+    x_i &\ge 0 \quad \forall i \in \{1, 2, 3, 4\} \\
+    y_i &\in \{0, 1\} \quad \forall i \in \{1, 2, 3, 4\}
+\end{align*}
+
+\begin{nota}{}
+\begin{itemize}
+    \item \textbf{Lógica Condicional (Regla 2):} Las desigualdades $y_3 \le y_1 + y_2$ y $y_4 \le y_1 + y_2$ aseguran que si se desea activar el producto 3 ($y_3=1$), la suma $y_1 + y_2$ debe ser al menos 1, obligando a que se produzca el producto 1, el 2, o ambos. Si ni el 1 ni el 2 se producen ($y_1=0, y_2=0$), entonces $y_3 \le 0$, lo cual bloquea su producción.
+    \item \textbf{Regla 3 Truncada:} Se hace la observación formal de que la condición 3 ("O bien") se encuentra cortada en el documento original del ejercicio, por lo que el modelo ha sido cerrado matemáticamente asumiendo únicamente las primeras dos reglas gerenciales.
+\end{itemize}
+\end{nota}
+
+
+\newpage
+
+\begin{ejercicio}{Modelos generales mixtos a partir de regiones gráficas}{ej10}
+Formular los modelos generales mixtos correspondientes para las restricciones representadas en los planos cartesianos.
+
+\textbf{Gráfica a}
+El plano muestra 4 regiones factibles disjuntas (R1, R2, R3, R4). El modelo debe garantizar que la solución pertenezca exclusivamente a una de estas áreas.
+\end{ejercicio}
+
+\vspace{0.4cm}
+\textbf{1. Definición de variables}\\
+Definimos las coordenadas del punto como variables continuas y creamos variables lógicas para seleccionar la región:
+\begin{itemize}
+    \item $x_1, x_2$: Coordenadas en el plano cartesiano (Variables continuas).
+    \item $y_k$: Variable binaria asociada a la región $k$, donde $k \in \{1, 2, 3, 4\}$.
+    \[ y_k = 
+    \begin{cases} 
+    1 & \text{Si la solución se ubica en la región } R_k \\
+    0 & \text{De lo contrario}
+    \end{cases} \]
+\end{itemize}
+
+\vspace{0.4cm}
+\textbf{2. Deducción de las inecuaciones por región}\\
+Analizando la geometría de la \textbf{Gráfica a)}, deducimos las fronteras de cada área:
+\begin{itemize}
+    \item \textbf{Región 1 (R1):} $0 \le x_1 \le 1$, \quad $x_2 \le 4$, \quad $x_1 + x_2 \ge 3$
+    \item \textbf{Región 2 (R2):} $1 \le x_1 \le 2$, \quad $1 \le x_2 \le 2$
+    \item \textbf{Región 3 (R3):} $2 \le x_1 \le 3$, \quad $x_2 \ge 0$, \quad $x_1 + x_2 \le 3$
+    \item \textbf{Región 4 (R4):} $0 \le x_1 \le 1$, \quad $x_2 \ge 0$, \quad $x_1 + x_2 \le 1$
+\end{itemize}
+
+\vspace{0.4cm}
+\textbf{3. Formulación del Modelo Mixto (Técnica Gran M)}\\
+Para obligar al modelo a elegir solo una región, la suma de las variables binarias debe ser 1. Luego, relajamos las restricciones de las áreas no elegidas sumando o restando una constante $M$ (suficientemente grande) multiplicada por $(1 - y_k)$.
+
+\textbf{Restricción de selección única:}
+\[ y_1 + y_2 + y_3 + y_4 = 1 \]
+
+\textbf{Restricciones activadas para R1:}
+\begin{align*}
+    x_1 &\ge 0 - M(1 - y_1) \\
+    x_1 &\le 1 + M(1 - y_1) \\
+    x_2 &\le 4 + M(1 - y_1) \\
+    x_1 + x_2 &\ge 3 - M(1 - y_1)
+\end{align*}
+
+\textbf{Restricciones activadas para R2:}
+\begin{align*}
+    x_1 &\ge 1 - M(1 - y_2) \\
+    x_1 &\le 2 + M(1 - y_2) \\
+    x_2 &\ge 1 - M(1 - y_2) \\
+    x_2 &\le 2 + M(1 - y_2)
+\end{align*}
+
+\textbf{Restricciones activadas para R3:}
+\begin{align*}
+    x_1 &\ge 2 - M(1 - y_3) \\
+    x_1 &\le 3 + M(1 - y_3) \\
+    x_2 &\ge 0 - M(1 - y_3) \\
+    x_1 + x_2 &\le 3 + M(1 - y_3)
+\end{align*}
+
+\textbf{Restricciones activadas para R4:}
+\begin{align*}
+    x_1 &\ge 0 - M(1 - y_4) \\
+    x_1 &\le 1 + M(1 - y_4) \\
+    x_2 &\ge 0 - M(1 - y_4) \\
+    x_1 + x_2 &\le 1 + M(1 - y_4)
+\end{align*}
+
+\textbf{Naturaleza de las variables:}
+\begin{align*}
+    x_1, x_2 &\ge 0 \\
+    y_1, y_2, y_3, y_4 &\in \{0, 1\}
+\end{align*}
+
+\begin{nota}{Interpretación del Modelo Geométrico}
+Si el modelo selecciona la región 2 ($y_2 = 1$), entonces $(1 - y_2) = 0$, provocando que las inecuaciones de R2 se vuelvan estrictas ($1 \le x_1 \le 2$ y $1 \le x_2 \le 2$). Simultáneamente, $y_1, y_3, y_4$ serán $0$, por lo que sus términos $(1 - y_k)$ valdrán $1$. Esto suma o resta la Gran $M$ a sus límites, volviéndolos redundantes y "apagando" geométricamente esas regiones para que no restrinjan al punto $(x_1, x_2)$.
+\end{nota}
+
+
+
+\end{document}
