@@ -11,3 +11,6 @@
 .build-tikz
 .DS_Store
 .Thumbs.db
+*.aux
+*.log
+*.synctex.gz

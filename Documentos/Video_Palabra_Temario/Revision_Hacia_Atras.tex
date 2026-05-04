@@ -1,0 +1,225 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+%--------------------------------------------------------------------------------
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% ---------------------------------------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+    
+
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textbf{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Revisión hacia atrás}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% CONTENIDO 
+\section{Revisión hacia atrás}
+
+\begin{ejercicio}{" "}
+    _  La revisión hacia atrás es la segunda fase del algoritmo CPM
+    que inicia en el nodo terminal del proyecto y retrocede hasta el nodo inicial,
+    moviéndose de derecha a izquierda. Su propósito principal es encontrar los 
+    límites de tiempo máximo en los que una actividad puede retrasarse sin afectar la fecha de entrega del proyecto.
+\end{ejercicio}
+
+\vspace{5mm}
+
+\textbf{¿Cómo se calcula?}
+\begin{itemize}
+    \item $LF_{ij}$: Tiempo más lejano de terminación.
+    \item $LS_{ij}$: Tiempo más lejano de iniciación
+    \item $t_{ij}$: Duración de la actividad.
+\end{itemize}
+
+\subsection{Inicialización en el nodo terminal}
+Para las actividades terminales 
+(las que concluyen el proyecto), 
+su tiempo más lejano de terminación es exactamente
+igual a la duración total del proyecto la cual se 
+obtuvo previamente en la revisión hacia adelante.
+
+\vspace{2mm}
+
+$LF_{it} = \text{Duración del proyecto}$
+
+\subsection{Cálculo del inicio lejano}
+Para cualquier actividad, el tiempo más tardío en que puede iniciar es simplemente su tiempo de terminación lejano menos su duración.
+
+\vspace{2mm}
+
+$LS_{ij} = LF_{ij} - t_{ij}$
+
+\subsection{Retroceso y regla del mínimo para predecesores}
+Cuando retrocedes a una actividad que tiene múltiples sucesoras, debes elegir el valor menor de los tiempos de inicio lejanos $LS$ de todas esas sucesoras.
+
+\vspace{2mm}
+
+$LF_{ij} = \min\{LS_{jk}\}$
+
+\subsection{Cálculo de la Holgura}
+
+Una vez calculados los tiempos lejanos, se cruzan con los tiempos próximos (hacia adelante) para obtener la holgura. 
+La holgura es el tiempo que una actividad puede demorarse sin ocasionar retrasos generales.
+
+\vspace{2mm}
+
+$f_{ij} = LS_{ij} - ES_{ij}$
+
+\vspace{2mm}
+
+$f_{ij} = LF_{ij} - EF_{ij}$
+
+\vspace{2mm}
+
+Si $f_{ij} = 0$, la actividad es crítica.
+
+
+
+
+\newpage
+
+\begin{center}
+\textbf{\Large Revisión Hacia Atrás }
+
+\vspace{5mm}
+
+
+\begin{tikzpicture}[
+    node distance=2.5cm and 3cm,
+    act/.style={circle, draw, minimum size=1.2cm, thick, fill=blue!10, font=\bfseries},
+    arr/.style={-{Stealth[length=3mm]}, thick, gray}
+]
+
+
+\node[act, label=below:{[LS=1 , LF=3]}] (A) {A ($t$=2)};
+\node[act, above right=of A, label=below:{[LS=3 , LF=8]}] (B) {B ($t$=5)};
+\node[act, below right=of A, label=below:{[LS=5 , LF=8]}] (C) {C ($t$=3)};
+\node[act, below right=of B, label=below:{[LS=8 , LF=12]}] (D) {D ($t$=4)};
+
+
+\draw[arr] (A) -- (B);
+\draw[arr] (A) -- (C);
+\draw[arr] (B) -- (D);
+\draw[arr] (C) -- (D);
+
+
+\node[text width=5cm, right=1.5cm of B, align=left, font=\small] {
+    \textbf{Cálculo en A (Mínimo):}\\
+    $LF_A = \min(LS_B, LS_C)$\\
+    $LF_A = \min(3, 5) = 3$
+};
+
+\node[text width=5cm, right=1.5cm of C, align=left, font=\small] {
+    \textbf{Cálculo en Terminal (D):}\\
+    $LF_D = D = 12$\\
+    $LS_D = 12 - 4 = 8$
+};
+
+\end{tikzpicture}
+\end{center}
+
+
+\end{document}
+
+
