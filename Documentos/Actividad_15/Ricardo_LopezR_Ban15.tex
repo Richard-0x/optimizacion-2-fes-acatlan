@@ -1,0 +1,582 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata, trees}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textit{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Banderín 15: Métodos de Ramificación y Acotamiento}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% CONTENIDO 
+\section{Resolución por Ramificación y Acotamiento}
+
+\begin{ejercicio}{Planteamiento del Modelo ($P_0$)}{form}
+\textbf{Función Objetivo:}
+\[ \max z = 3x_1 + x_2 + 3x_3 \]
+\textbf{Sujeto a:}
+\begin{align}
+    -x_1 + 2x_2 + x_3 &\leq 4 \\
+    4x_2 - 3x_3 &\leq 2 \\
+    x_1 - 3x_2 + 2x_3 &\leq 3 
+\end{align}
+Con $x_1, x_2, x_3 \geq 0$, y $x_1, x_3 \in \mathbb{Z}$.
+\end{ejercicio}
+
+
+
+\begin{nota}{Demostración Algebraica de Cotas Máximas}
+Sumando la restricción (1) y la restricción (3):
+\[ (-x_1 + 2x_2 + x_3) + (x_1 - 3x_2 + 2x_3) \leq 4 + 3 \implies -x_2 + 3x_3 \leq 7 \implies x_2 \geq 3x_3 - 7 \]
+De la restricción (2) despejamos $x_2$:
+\[ 4x_2 - 3x_3 \leq 2 \implies x_2 \leq \frac{2 + 3x_3}{4} \]
+Igualando los límites para $x_2$:
+\[ 3x_3 - 7 \leq \frac{2 + 3x_3}{4} \implies 12x_3 - 28 \leq 2 + 3x_3 \implies 9x_3 \leq 30 \implies \mathbf{x_3 \leq 3.33} \]
+Despejando $x_1$ de (3) y sustituyendo el máximo de $x_2$:
+\[ x_1 \leq 3 + 3x_2 - 2x_3 \leq 3 + 3\left(\frac{2+3x_3}{4}\right) - 2x_3 = \frac{18 + x_3}{4} \]
+Como el máximo de $x_3$ es $10/3$, entonces $x_1 \leq \frac{18 + 10/3}{4} \implies \mathbf{x_1 \leq 5.33}$.
+\end{nota}
+
+
+\subsection{Evaluación de Nodos}
+
+\subsubsection*{Nodo 0 (Modelo Relajado)}
+Al resolver el modelo lineal relajado usando el método Simplex, el óptimo continuo se encuentra en la intersección (vértice) de las tres restricciones principales:
+\begin{itemize}
+    \item $x_1 = 16/3 \approx 5.33$
+    \item $x_2 = 3$
+    \item $x_3 = 10/3 \approx 3.33$
+\end{itemize}
+$Z_0 = 3(16/3) + 3 + 3(10/3) = \mathbf{29}$. 
+Como $x_1$ y $x_3$ son fraccionarias y deben ser enteras, ramificamos sobre $x_1$ (que tiene la parte fraccionaria mayor, $0.33$).
+\textbf{Ramas:} $x_1 \leq 5$ (Nodo 1) y $x_1 \geq 6$ (Nodo 2).
+
+\subsubsection*{Nodo 2 ($P_2$: $x_1 \geq 6$)}
+Según nuestra demostración algebraica de cotas globales, el valor máximo absoluto que puede tomar $x_1$ en el espacio factible continuo es $5.33$. Por lo tanto, forzar $x_1 \geq 6$ colapsa el poliedro.
+\textbf{Estado:} Podado por Infactibilidad.
+
+\subsubsection*{Nodo 1 ($P_1$: $x_1 \leq 5$)}
+Sujetamos el modelo a $x_1 = 5$. La resolución del nuevo subproblema empuja el óptimo a:
+\begin{itemize}
+    \item $x_1 = 5$
+    \item $x_2 = 20/7 \approx 2.85$
+    \item $x_3 = 23/7 \approx 3.28$
+\end{itemize}
+$Z_1 = 3(5) + 20/7 + 3(23/7) = 194/7 \approx \mathbf{27.71}$.
+Recordando que $x_2$ puede ser continua, solo nos preocupa $x_3$ fraccionaria. Ramificamos sobre $x_3$.
+\textbf{Ramas:} $x_3 \leq 3$ (Nodo 3) y $x_3 \geq 4$ (Nodo 4).
+
+\subsubsection*{Nodo 4 ($P_4$: $x_1 \leq 5, x_3 \geq 4$)}
+Nuevamente apelamos a las cotas globales: el máximo absoluto de $x_3$ en el sistema es $3.33$. Exigir $x_3 \geq 4$ viola irremediablemente las restricciones simultáneas del sistema.
+\textbf{Estado:} Podado por Infactibilidad.
+
+\subsubsection*{Nodo 3 ($P_3$: $x_1 \leq 5, x_3 \leq 3$)}
+Sujetamos $x_1 = 5$ y $x_3 = 3$. La variable continua $x_2$ busca expandirse para maximizar $Z$. La restricción más ajustada para $x_2$ cuando $x_3=3$ proviene de $4x_2 - 3(3) \leq 2 \implies x_2 \leq 11/4 = 2.75$.
+\begin{itemize}
+    \item $\mathbf{x_1 = 5}$ (Entero)
+    \item $\mathbf{x_2 = 2.75}$ (Continua permitida)
+    \item $\mathbf{x_3 = 3}$ (Entero)
+\end{itemize}
+Comprobamos en la restricción (3): $5 - 3(2.75) + 2(3) = 5 - 8.25 + 6 = 2.75 \leq 3$. (Factible).
+$Z_3 = 3(5) + 2.75 + 3(3) = 15 + 2.75 + 9 = \mathbf{26.75}$.
+
+Este nodo satisface todas las restricciones de integridad mixta requeridas. Se convierte en nuestra cota inferior (Incumbente) y el nodo se poda por optimalidad. No existen más ramas por explorar.
+
+\subsection{Árbol de Ramificación y Acotamiento}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=2.5cm,
+        level 1/.style={sibling distance=7cm},
+        level 2/.style={sibling distance=4cm},
+        every node/.style={draw, rectangle, rounded corners, align=center, fill=blue!5, inner sep=2mm, thick},
+        edge from parent/.style={draw, -{Latex[length=3mm]}, thick}
+    ]
+    
+    \node (P0) {\textbf{Nodo 0 (Raíz)}\\ $x_1 = 5.33$\\ $x_2 = 3$\\ $x_3 = 3.33$\\ $\mathbf{Z = 29}$}
+        child {node (P1) {\textbf{Nodo 1}\\ $x_1 = 5$\\ $x_2 \approx 2.85$\\ $x_3 \approx 3.28$\\ $\mathbf{Z \approx 27.71}$}
+            child {node (P3) [fill=green!15, draw=green!50!black, very thick] {\textbf{Nodo 3 (Óptimo Mixto)}\\ $x_1 = 5$\\ $x_2 = 2.75$\\ $x_3 = 3$\\ $\mathbf{Z = 26.75}$}
+                edge from parent node[left, draw=none, fill=none] {$x_3 \leq 3$}
+            }
+            child {node (P4) [fill=red!15, draw=red!50!black] {\textbf{Nodo 4}\\ Infactible}
+                edge from parent node[right, draw=none, fill=none] {$x_3 \geq 4$}
+            }
+            edge from parent node[left=3mm, draw=none, fill=none] {$x_1 \leq 5$}
+        }
+        child {node (P2) [fill=red!15, draw=red!50!black] {\textbf{Nodo 2}\\ Infactible}
+            edge from parent node[right=3mm, draw=none, fill=none] {$x_1 \geq 6$}
+        };
+        
+    \end{tikzpicture}
+    \caption{Árbol de Ramificación y Acotamiento para el modelo PEM.}
+\end{figure}
+
+
+\subsection{Interpretación}
+
+El algoritmo convergió rápidamente gracias a que las cotas estructurales del poliedro eran bastante estrechas. La solución óptima mixta dicta que:
+\[ \mathbf{x_1 = 5, \quad x_2 = 2.75, \quad x_3 = 3} \]
+Valor máximo en la función objetivo de $\mathbf{Z = 26.75}$. 
+
+Es crucial destacar el comportamiento de la variable $x_2$. Al ser la única variable libre de la restricción $\mathbb{Z}$, actuó como un amortiguador en el Nodo 3. Si hubiésemos intentado forzar $x_2$ a ser un entero (resolviéndolo erróneamente como un problema Puro), la función objetivo habría caído drásticamente al limitar la optimización fina de los recursos, demostrando la importancia de identificar correctamente si un modelo es Puro, Binario o Mixto desde el planteamiento.
+
+\newpage
+
+\section{Modelo B: Programación Entera}
+
+\begin{ejercicio}{Planteamiento del Modelo B}{formB}
+\textbf{Función Objetivo:}
+\[ \max z = 6x_1 + 3x_2 + 4x_3 + 5x_4 \]
+\textbf{Sujeto a:}
+\begin{align}
+    6x_1 + 3x_2 + 4x_3 + x_4 &\leq 19 \\
+    x_1 + 2x_2 + 3x_3 &\leq 15 \\
+    2x_1 + 4x_2 + x_3 + 3x_4 &\leq 21 \\
+    3x_1 + x_2 + 2x_3 + 4x_4 &\leq 13 
+\end{align}
+Con $x_j \geq 0$ y $x_j \in \mathbb{Z}$ para $j = 1,2,3,4$.
+\end{ejercicio}
+
+\subsection{Solución Relajada y Ramificación}
+
+\textbf{Nodo 0 (Relajación Continua):}
+Al resolver el modelo lineal relajado, las restricciones activas dominantes son la (1) y la (4). La solución óptima continua es fraccionaria:
+$x_1 \approx 0.87$, $x_2 \approx 4.06$, $x_3 = 0$, $x_4 \approx 1.58$. \\
+$Z_0 = 25.32$.
+
+Seleccionamos ramificar sobre $x_4$ ya que posee el mayor peso en la función objetivo después de $x_1$, y acotará fuertemente la restricción (4). Ramificamos en $x_4 \leq 1$ y $x_4 \geq 2$.
+
+\begin{nota}{Análisis del Nodo 1 ($x_4 \leq 1$)}
+Si acotamos $x_4 = 1$, la restricción (1) se convierte en:
+$6x_1 + 3x_2 + 4x_3 \leq 18$. \\
+Notemos que la función objetivo es $Z = (6x_1 + 3x_2 + 4x_3) + 5x_4$.
+Por lo tanto, si $x_4 = 1$, el valor máximo matemático que puede alcanzar $Z$ es $18 + 5(1) = 23$. 
+Al evaluar el punto entero $(3, 0, 0, 1)$, obtenemos exactamente $Z = 23$. Se cumplen todas las restricciones. Este nodo se poda por optimalidad y se convierte en nuestra Cota Inferior.
+\end{nota}
+
+\begin{alerta}{Análisis del Nodo 2 ($x_4 \geq 2$)}
+Si acotamos $x_4 \geq 2$ (ej. $x_4=2$), la restricción (4) se reduce drásticamente: 
+$3x_1 + x_2 + 2x_3 \leq 5$. \\
+Al maximizar la función continua bajo este severo límite, el nuevo óptimo relajado cae a $Z \approx 23.57$. 
+Puesto que $Z$ debe ser entero, el límite máximo posible en esta rama es $\lfloor 23.57 \rfloor = 23$. Como ya tenemos una solución con $Z = 23$ en el Nodo 1, no es matemáticamente posible encontrar una solución estrictamente mejor en esta rama. 
+\textit{*(Existe otra solución alternativa entera aquí: $(0,3,1,2)$ que también da $Z=23$, demostrando el empate).* }
+\end{alerta}
+
+\subsection{Árbol del Modelo B}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=2.5cm,
+        level 1/.style={sibling distance=6cm},
+        every node/.style={draw, rectangle, rounded corners, align=center, fill=blue!5, inner sep=2mm, thick},
+        edge from parent/.style={draw, -{Latex[length=3mm]}, thick}
+    ]
+    
+    \node (P0) {\textbf{Nodo 0}\\ $x_1 = 0.87, x_2 = 4.06$\\ $x_3 = 0, x_4 = 1.58$\\ $\mathbf{Z = 25.32}$}
+        child {node (P1) [fill=green!15, draw=green!50!black, very thick] {\textbf{Nodo 1 (Óptimo)}\\ $x_1 = 3, x_2 = 0$\\ $x_3 = 0, x_4 = 1$\\ $\mathbf{Z = 23}$}
+            edge from parent node[left=2mm, draw=none, fill=none] {$x_4 \leq 1$}
+        }
+        child {node (P2) [fill=gray!15, draw=gray!50!black] {\textbf{Nodo 2 (Acotado)}\\ $Z_{max} \approx 23.57$\\ \textit{Sol: $(0,3,1,2) \to Z=23$}}
+            edge from parent node[right=2mm, draw=none, fill=none] {$x_4 \geq 2$}
+        };
+        
+    \end{tikzpicture}
+    \caption{Árbol de Ramificación y Acotamiento (Modelo B)}
+\end{figure}
+
+\textbf{Solución Óptima (Modelo B):} $x_1=3, x_2=0, x_3=0, x_4=1 \implies Z=23$.
+
+\newpage
+
+\section{Modelo C: Programación Binaria}
+
+\begin{ejercicio}{Planteamiento del Modelo C}{formC}
+\textbf{Función Objetivo:}
+\[ \max z = 2x_1 - x_2 + 5x_3 - 3x_4 + 4x_5 \]
+\textbf{Sujeto a:}
+\begin{align}
+    3x_1 - 2x_2 + 7x_3 - 5x_4 + 4x_5 &\leq 6 \\
+    x_1 - x_2 + 2x_3 - 4x_4 + 2x_5 &\leq 0 
+\end{align}
+Con $x_j \in \{0, 1\}$.
+\end{ejercicio}
+
+\subsection{Análisis Lógico de Ramificación Binaria}
+
+En modelos binarios tipo mochila, ramificamos evaluando la variable con mayor aporte a la función objetivo que también consume más recursos. Esta es $x_3$ (Coeficiente $Z=5$, Peso $C_1=7$).
+
+\begin{itemize}
+    \item \textbf{Rama $x_3 = 1$:} Al activar $x_3$, la restricción (2) exige $x_1 - x_2 - 4x_4 + 2x_5 \leq -2$.
+    Para lograr un valor $\leq -2$, es \textbf{obligatorio} que $x_4 = 1$ (ya que aporta $-4$). Si $x_4 = 0$, la restricción es infactible. 
+    Con $x_3 = 1$ y $x_4 = 1$, para maximizar $Z$ buscamos activar $x_5 = 1$. Probando el punto $(0, 0, 1, 1, 1)$, ambas restricciones se cumplen exactamente al límite:
+    C1: $0 - 0 + 7 - 5 + 4 = 6 \leq 6$.
+    C2: $0 - 0 + 2 - 4 + 2 = 0 \leq 0$.
+    Obtenemos $\mathbf{Z = 6}$.
+    
+    \item \textbf{Rama $x_3 = 0$:} Si apagamos $x_3$, intentamos maximizar con $x_5$ y $x_1$. La mejor combinación factible que no viola la restricción (2) es $(1, 0, 0, 1, 1)$, lo cual nos otorga un $\mathbf{Z = 3}$. Este nodo es dominado por la rama anterior.
+\end{itemize}
+
+\subsection{Árbol del Modelo C}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=2.5cm,
+        level 1/.style={sibling distance=6cm},
+        level 2/.style={sibling distance=4cm},
+        every node/.style={draw, rectangle, rounded corners, align=center, fill=blue!5, inner sep=2mm, thick},
+        edge from parent/.style={draw, -{Latex[length=3mm]}, thick}
+    ]
+    
+    \node (P0) {\textbf{Nodo 0}\\ $0 \leq x_j \leq 1$}
+        child {node (P1) [fill=gray!15, draw=gray!50!black] {\textbf{Nodo 1}\\ $x = (1, 0, 0, 1, 1)$\\ $\mathbf{Z = 3}$}
+            edge from parent node[left=2mm, draw=none, fill=none] {$x_3 = 0$}
+        }
+        child {node (P2) {\textbf{Nodo 2}\\ Se requiere holgura\\ $x_4 = 1$ Obligatorio}
+            child {node (P4) [fill=red!15, draw=red!50!black] {\textbf{Nodo 4}\\ Infactible por (C2)}
+                edge from parent node[left=2mm, draw=none, fill=none] {$x_4 = 0$}
+            }
+            child {node (P3) [fill=green!15, draw=green!50!black, very thick] {\textbf{Nodo 3 (Óptimo)}\\ $x = (0, 0, 1, 1, 1)$\\ $\mathbf{Z = 6}$}
+                edge from parent node[right=2mm, draw=none, fill=none] {$x_4 = 1$}
+            }
+            edge from parent node[right=2mm, draw=none, fill=none] {$x_3 = 1$}
+        };
+        
+    \end{tikzpicture}
+    \caption{Árbol de Ramificación Binaria (Modelo C)}
+\end{figure}
+
+\textbf{Solución Óptima (Modelo C):} $x_1=0, x_2=0, x_3=1, x_4=1, x_5=1 \implies Z=6$.
+
+\newpage
+
+
+\section{Problema del Camión de Mudanza }
+
+\begin{ejercicio}{Planteamiento del Modelo}{form}
+\textbf{Programación Binaria} tipo Mochila. 
+El objetivo es maximizar el valor transportado sin exceder la capacidad volumétrica del camión 
+(1100 pies cúbicos).
+
+\textbf{Variables de Decisión:}
+Sea $x_j \in \{0, 1\}$, donde $x_j = 1$ indica que el objeto $j$ se sube al camión, y $x_j = 0$ indica que no.
+\begin{itemize}
+    \item $x_1$: Juego de recámara
+    \item $x_2$: Juego de comedor
+    \item $x_3$: Aparato estéreo
+    \item $x_4$: Sofá
+    \item $x_5$: Televisor
+\end{itemize}
+
+\textbf{Función Objetivo (Maximizar valor en \$):}
+\[ \max Z = 31x_1 + 14x_2 + 48x_3 + 60x_4 + 10x_5 \]
+
+\textbf{Sujeto a (Capacidad en pies cúbicos):}
+\[ 800x_1 + 600x_2 + 300x_3 + 400x_4 + 200x_5 \leq 1100 \]
+\end{ejercicio}
+
+\subsection{Aplicación de Ramificación y Acotamiento}
+
+Para resolver eficientemente el árbol, calculamos la \textbf{rentabilidad} de cada objeto 
+(Valor / Volumen). 
+Esto nos permite acotar los nodos resolviendo la versión relajada continua 
+(fraccionaria) del problema de la mochila.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l c c c c}
+    \toprule
+    \textbf{Objeto ($x_j$)} & \textbf{Valor (\$)} & \textbf{Volumen ($ft^3$)} & \textbf{Rentabilidad (\$/$ft^3$)} & \textbf{Prioridad} \\
+    \midrule
+    Aparato estéreo ($x_3$) & 48 & 300 & 0.160 & \textbf{1} \\
+    Sofá ($x_4$)            & 60 & 400 & 0.150 & \textbf{2} \\
+    Televisor ($x_5$)       & 10 & 200 & 0.050 & \textbf{3} \\
+    Juego de recámara ($x_1$) & 31 & 800 & 0.038 & \textbf{4} \\
+    Juego de comedor ($x_2$) & 14 & 600 & 0.023 & \textbf{5} \\
+    \bottomrule
+    \end{tabular}
+    \caption{Análisis Heurístico de Rentabilidad}
+\end{table}
+
+\begin{nota}{Evaluación de Nodos (Cotas Superiores)}
+Llenamos el camión en orden de prioridad para encontrar la cota superior relajada de cada nodo:
+
+\textbf{Nodo 0 (Raíz):} Llenamos con los mejores: $x_3=1, x_4=1, x_5=1$. Hemos ocupado $900 \ ft^3$ y ganado \$118. Quedan $200 \ ft^3$. El siguiente es $x_1$. Fraccionamos: tomamos $200/800 = 0.25$ de la recámara. Valor aportado = $31(0.25) = 7.75$. \\
+$Z_0 = 118 + 7.75 = \mathbf{125.75} \implies Z \leq 125$. (Ramificamos en $x_1$).
+
+\textbf{Nodo 1 ($x_1 = 0$):} Como $x_1=0$, llenamos con $x_3, x_4, x_5$ (Ocupado: $900 \ ft^3$, Valor: \$118). Quedan $200 \ ft^3$. El siguiente es $x_2$. Tomamos $200/600 = 1/3$. Valor aportado = $14(1/3) \approx 4.66$. \\
+$Z_1 = 118 + 4.66 = \mathbf{122.66} \implies Z \leq 122$. (Ramificamos en $x_2$).
+
+\textbf{Nodo 2 ($x_1 = 1$):} Obligamos a llevar la recámara ($x_1=1$). Ocupa $800 \ ft^3$, gana \$31. Quedan $300 \ ft^3$. Llenamos con $x_3$ (Ocupa 300, gana \$48). Capacidad agotada (Cero espacio sobrante). \\
+Solución \textbf{Entera} encontrada: $x=(1,0,1,0,0) \implies \mathbf{Z = 79}$. Se convierte en nuestra primera Incumbente (Cota Inferior).
+
+\textbf{Nodo 3 ($x_1 = 0, x_2 = 0$):} Llenamos con $x_3=1, x_4=1, x_5=1$. Ocupan $900 \ ft^3$, ganan \$118. Quedan $200 \ ft^3$ libres pero no hay más objetos para llevar. \\
+Solución \textbf{Entera} encontrada: $x=(0,0,1,1,1) \implies \mathbf{Z = 118}$. Actualizamos la Incumbente ($118 > 79$). El Nodo 2 queda superado.
+
+\textbf{Nodo 4 ($x_1 = 0, x_2 = 1$):} Obligamos a llevar el comedor ($x_2=1$). Ocupa $600 \ ft^3$, gana \$14. Quedan $500 \ ft^3$. Llenamos con $x_3=1$ (Ocupa 300, gana \$48). Quedan $200 \ ft^3$. Fraccionamos $x_4$: tomamos $200/400 = 0.5$. Valor aportado = $60(0.5) = 30$. \\
+$Z_4 = 14 + 48 + 30 = \mathbf{92}$. 
+\end{nota}
+
+\begin{alerta}{Nodo 4}
+El valor máximo que puede alcanzar el Nodo 4 (aún en su versión fraccionaria relajada) es \$92. Dado que ya encontramos una solución entera en el Nodo 3 que garantiza \$118, podamos el Nodo 4 por Acotamiento. No es posible encontrar una mejor solución en esa rama.
+\end{alerta}
+
+\newpage
+\subsection{Construcción del Árbol de Ramificación}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=2.5cm,
+        level 1/.style={sibling distance=6cm},
+        level 2/.style={sibling distance=4cm},
+        every node/.style={draw, rectangle, rounded corners, align=center, fill=blue!5, inner sep=2mm, thick},
+        edge from parent/.style={draw, -{Latex[length=3mm]}, thick}
+    ]
+    
+    \node (P0) {\textbf{Nodo 0 (Raíz)}\\ $x=(0.25, 0, 1, 1, 1)$\\ $Z_{max} \leq 125.75$}
+        child {node (P1) {\textbf{Nodo 1}\\ $x=(0, 0.33, 1, 1, 1)$\\ $Z_{max} \leq 122.66$}
+            child {node (P3) [fill=green!15, draw=green!50!black, very thick] {\textbf{Nodo 3 (Óptimo)}\\ $x=(0, 0, 1, 1, 1)$\\ $\mathbf{Z = 118}$}
+                edge from parent node[left=2mm, draw=none, fill=none] {$x_2 = 0$}
+            }
+            child {node (P4) [fill=red!15, draw=red!50!black] {\textbf{Nodo 4}\\ Podado por Cota\\ $Z_{max} \leq 92 < 118$}
+                edge from parent node[right=2mm, draw=none, fill=none] {$x_2 = 1$}
+            }
+            edge from parent node[left=2mm, draw=none, fill=none] {$x_1 = 0$}
+        }
+        child {node (P2) [fill=gray!15, draw=gray!50!black] {\textbf{Nodo 2}\\ Sol. Entera Subóptima\\ $x=(1, 0, 1, 0, 0)$\\ $Z = 79$}
+            edge from parent node[right=2mm, draw=none, fill=none] {$x_1 = 1$}
+        };
+        
+    \end{tikzpicture}
+    \caption{Árbol de Ramificación y Acotamiento para el Camión de Mudanza}
+\end{figure}
+
+\subsection{Obtención de la Solución Óptima}
+El algoritmo finaliza al podar todas las ramas vivas. La mejor cota inferior entera obtenida es el resultado definitivo.
+La solución óptima indica llevar:
+\begin{itemize}
+    \item $x_1 = 0$ (Juego de recámara: NO)
+    \item $x_2 = 0$ (Juego de comedor: NO)
+    \item $\mathbf{x_3 = 1}$ (Aparato estéreo: \textbf{SÍ})
+    \item $\mathbf{x_4 = 1}$ (Sofá: \textbf{SÍ})
+    \item $\mathbf{x_5 = 1}$ (Televisor: \textbf{SÍ})
+\end{itemize}
+\textbf{Valor Total Maximizado:} \$118 dólares. \\
+\textbf{Volumen Total Utilizado:} $900 \ ft^3$ (Sobra un espacio de $200 \ ft^3$).
+
+\subsection{Interpretación y Análisis de Resultados}
+Capacidad restrictiva: \textbf{el tamaño no garantiza eficiencia}. 
+Aunque el juego de recámara y el comedor parecen ser muebles importantes, 
+su relación valor-volumen es extremadamente pobre. 
+
+Introducir cualquiera de estos dos muebles colosales satura el camión rápidamente, desplazando a objetos mucho más compactos y valiosos como el estéreo o el sofá. Al descartar los muebles voluminosos, optimizamos el espacio del camión asegurando el mayor retorno de valor posible en la mudanza, incluso dejando una pequeña fracción de espacio libre.
+
+\newpage
+
+
+\section{Ejercicio e) Problema del Agente Viajero }
+
+\begin{ejercicio}{Planteamiento del Modelo Matemático}{tsp}
+\textbf{Problema del Agente Viajero Simétrico} ($t_{ij} = t_{ji}$) en un grafo no completamente conexo. El objetivo es minimizar el tiempo total de recorrido visitando cada ciudad (A, B, C, D, E, F) exactamente una vez y regresando al punto de origen.
+
+\textbf{Variables de Decisión:}
+Sea $x_{ij} \in \{0, 1\}$, donde $x_{ij} = 1$ si el autobús viaja directamente de la ciudad $i$ a la ciudad $j$, y $0$ en caso contrario.
+
+\textbf{Función Objetivo (Minimizar horas de viaje):}
+\[ \min Z = 5x_{AB} + 5x_{AE} + 3x_{AF} + 12x_{BC} + 10x_{BF} + 8x_{CD} + 3x_{CF} + 12x_{DE} + 5x_{DF} + 4x_{EF} \]
+
+\textbf{Sujeto a:}
+\begin{align*}
+    \sum_{j \neq i} x_{ij} &= 1 \quad \forall i \in \{A,B,C,D,E,F\} \quad \text{(Debe salir de cada ciudad una vez)} \\
+    \sum_{i \neq j} x_{ij} &= 1 \quad \forall j \in \{A,B,C,D,E,F\} \quad \text{(Debe entrar a cada ciudad una vez)} \\
+    u_i - u_j + 6x_{ij} &\leq 5 \quad \text{(Restricciones MTZ para eliminación de sub-rutas)}
+\end{align*}
+\end{ejercicio}
+
+\subsection{Aplicación de Ramificación y Acotamiento}
+
+Dado que el grafo es disperso (faltan muchas conexiones directas como A-C, A-D, B-D, B-E, etc.), la forma más eficiente de aplicar Ramificación y Acotamiento es mediante un \textbf{Árbol de Búsqueda de Rutas (Enumeración Estructurada)}. Partiremos del nodo A y ramificaremos hacia sus vecinos válidos, acumulando el costo (tiempo). Si alcanzamos un "callejón sin salida" (infactibilidad) o el tiempo supera a una ruta óptima ya encontrada (cota), podamos esa rama.
+
+\begin{nota}{Evaluación y Poda Lógica}
+Iniciamos en \textbf{A}. Sus opciones son B(5), E(5) y F(3).
+\begin{itemize}
+    \item \textbf{Rama A $\to$ B:} Desde B, podemos ir a C(12) o a F(10). 
+        \begin{itemize}
+            \item Si vamos por C (Costo 17): Seguimos a D(8), costo 25. Desde D podemos ir a E(12) o F(5).
+            \begin{itemize}
+                \item Si D $\to$ E (Costo 37): Luego E $\to$ F(4) $\to$ A(3) = \textbf{Ruta completa de 44 horas}. (Incumbente inicial).
+                \item Si D $\to$ F (Costo 30): Luego F $\to$ E(4) $\to$ A(5) = \textbf{Ruta completa de 39 horas}. (Nueva Incumbente. Actualiza la Cota Superior).
+            \end{itemize}
+            \item Si vamos por F (Costo 15): F conecta con el resto. Si intentamos F $\to$ C(3) $\to$ D(8) $\to$ E(12) $\to$ A(5) = Ruta completa de 43 horas. Como $43 > 39$, se descarta.
+        \end{itemize}
+    
+    \item \textbf{Rama A $\to$ F:} Tiene costo inicial muy bajo (3). Sin embargo, al usar a F temprano, obligamos a recorrer los extremos del grafo sin el "puente" central. 
+        \begin{itemize}
+            \item Si A $\to$ F $\to$ C $\to$ D $\to$ E... aquí nos quedamos atascados porque E no conecta con B para cerrar el ciclo. ¡Infactible! Se poda.
+            \item Si A $\to$ F $\to$ B $\to$ C $\to$ D $\to$ E $\to$ A. Costo: $3+10+12+8+12+5 = 50$. Podado por cota ($50 > 39$).
+        \end{itemize}
+        
+    \item \textbf{Rama A $\to$ E:} Al ser un problema simétrico, la rama que va hacia E es el espejo exacto de la que va hacia B. La ruta $A \to E \to F \to D \to C \to B \to A$ arrojará exactamente \textbf{39 horas}.
+\end{itemize}
+\end{nota}
+
+\newpage
+\subsection{Construcción del Árbol de Ramificación}
+
+Se ilustra la rama principal de búsqueda. Las ramas simétricas o de infactibilidad temprana se resumen para claridad estructural.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=1.8cm, sibling distance=4cm,
+        every node/.style={draw, rectangle, rounded corners, fill=blue!5, align=center, thick},
+        edge from parent/.style={draw, -{Latex[length=3mm]}, thick}
+    ]
+    \node { \textbf{A} \\ $t=0$ }
+        child { node { \textbf{B} \\ $t=5$ }
+            child { node { \textbf{C} \\ $t=17$ }
+                child { node { \textbf{D} \\ $t=25$ }
+                    child { node { \textbf{E} \\ $t=37$ }
+                        child { node { $F \to A$ \\ \textbf{Costo: 44} } }
+                    }
+                    child { node[fill=green!15, draw=green!50!black, very thick] { \textbf{F} \\ $t=30$ }
+                        child { node[fill=green!15, draw=green!50!black, very thick] { $E \to A$ \\ \textbf{Costo: 39} } }
+                    }
+                }
+                child { node { \textbf{F} \\ $t=20$ }
+                    child { node { $D \to E \to A$ \\ \textbf{Costo: 42} } }
+                }
+            }
+            child { node[fill=red!15, draw=red!50!black] { \textbf{F} \\ $t=15$ }
+                child { node[fill=red!15, draw=red!50!black] { $C \to D \to E \to A$ \\ Podado ($43 > 39$) } }
+            }
+        }
+        child { node[fill=gray!15] { \textbf{F} ($t=3$) \\ \textit{Genera infactibilidad} \\ \textit{o sobrepasa cota} } }
+        child { node[fill=gray!15] { \textbf{E} ($t=5$) \\ \textit{Ruta simétrica inversa} \\ \textit{Costo óptimo: 39} } };
+    \end{tikzpicture}
+    \caption{Árbol de Búsqueda de Rutas (Agente Viajero TSP)}
+\end{figure}
+
+\subsection{Obtención de la Solución Óptima}
+
+La cota mínima encontrada tras agotar todas las combinaciones factibles del árbol es de $Z = 39$.
+La secuencia óptima de ciudades que debe recorrer el autobús es:
+\[ \mathbf{A \to B \to C \to D \to F \to E \to A} \]
+*(Nota: Su recorrido inverso $\mathbf{A \to E \to F \to D \to C \to B \to A}$ es igualmente válido y óptimo).*
+
+\subsection{Interpretación}
+
+Para minimizar el tiempo total a \textbf{39 horas}, el algoritmo nos demuestra que la clave del problema reside en el nodo \textbf{F}. Dado que la ciudad F es el "hub" central (la única con 5 conexiones), podría parecer lógico visitarla primero desde A (aprovechando el tramo de 3 horas). Sin embargo, hacerlo provoca que el autobús quede aislado en un extremo del mapa, obligándolo a tomar tramos muy penalizados como $D \to E$ (12 hrs) o a atascarse en callejones sin salida.
+
+La estrategia  óptima consiste en utilizar el nodo central \textbf{F} como un atajo
+ para saltar el largo tramo $D \to E$. Al hacer el barrido periférico $A \to B \to C \to D$ y 
+ cruzar por el centro hacia $E$ usando a $F$, 
+ esquivamos la ruta de 12 horas, garantizando el circuito más rápido posible para regresar al punto de partida.
+
+\end{document}

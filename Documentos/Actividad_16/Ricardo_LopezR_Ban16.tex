@@ -1,0 +1,231 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata, trees}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textit{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Banderín 15: Métodos de Ramificación y Acotamiento}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+
+% CONTENIDO 
+\section{Resolución mediante el Método Aditivo de Balas}
+
+\begin{alerta}{Condiciones Previas del Método}
+El Algoritmo de Balas requiere que el problema esté formulado como \textbf{minimización}, que todos los coeficientes de la función objetivo sean \textbf{positivos} ($c_j \geq 0$) y que las restricciones sean de la forma $\leq$.
+\end{alerta}
+
+\begin{ejercicio}{Formulación Estándar de Balas}{form}
+\textbf{Modelo Original:}
+\begin{align*}
+    \max Z &= 3x_1 - x_2 + 2x_3 - x_4 - x_5 \\
+    \text{s.a.} \quad 2x_1 + x_2 - 3x_4 + x_5 &\leq 1 \quad \text{(C1)}\\
+    x_1 + 2x_2 - 3x_3 - x_4 + 2x_5 &\geq 2 \quad \text{(C2)}\\
+    2x_1 + 3x_2 + 5x_3 - x_4 - x_5 &\geq 3 \quad \text{(C3)}
+\end{align*}
+Con $x_j \in \{0, 1\}$.
+
+\textbf{1. Conversión de Max a Min:}
+$\min W = -Z = -3x_1 + x_2 - 2x_3 + x_4 + x_5$.
+
+\textbf{2. Transformación de Coeficientes Negativos:}
+Para hacer $c_1, c_3 \geq 0$, usamos el complemento binario: $x_1' = 1 - x_1$ y $x_3' = 1 - x_3$.
+Sustituyendo en la función objetivo:
+\[ W = -3(1 - x_1') + x_2 - 2(1 - x_3') + x_4 + x_5 = 3x_1' + x_2 + 2x_3' + x_4 + x_5 - 5 \]
+Ignoramos la constante $-5$ para las iteraciones, definiendo $W' = 3x_1' + x_2 + 2x_3' + x_4 + x_5$.
+
+\textbf{3. Sustitución y Ajuste de Restricciones (Forma $\leq$):}
+Aplicando los complementos $x_1 = 1 - x_1'$ y $x_3 = 1 - x_3'$, y multiplicando C2 y C3 por $-1$:
+\begin{align*}
+    C_1: -2x_1' + x_2 - 3x_4 + x_5 &\leq -1 \\
+    C_2: x_1' - 2x_2 - 3x_3' + x_4 - 2x_5 &\leq -4 \\
+    C_3: 2x_1' - 3x_2 + 5x_3' + x_4 + x_5 &\leq 4 
+\end{align*}
+\end{ejercicio}
+
+\subsection{ Iteraciones }
+
+Evaluamos la factibilidad retornando a las variables originales $(x_1, x_2, x_3, x_4, x_5)$ considerando la poda lógica de Balas (si una asignación parcial viola irremediablemente las restricciones o supera la cota, se poda).
+
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{c l c c c c l}
+    \toprule
+    \textbf{Nodo} & \textbf{Asignación $(x_1, x_2, x_3, x_4, x_5)$} & \textbf{C1 $\leq 1$} & \textbf{C2 $\geq 2$} & \textbf{C3 $\geq 3$} & \textbf{Z} & \textbf{Estado} \\
+    \midrule
+    $N_0$ & $(0,0,0,0,0)$ & $0 \leq 1$ (V) & $0 \geq 2$ (F) & $0 \geq 3$ (F) & -- & Infactible. Ramificar. \\
+    $N_1$ & $(1,0,0,0,0)$ & $2 \leq 1$ (F) & $1 \geq 2$ (F) & $2 \geq 3$ (F) & -- & Podado. \\
+    $N_2$ & $(0,1,0,0,0)$ & $1 \leq 1$ (V) & $2 \geq 2$ (V) & $3 \geq 3$ (V) & -1 & Factible. Incumbente $Z=-1$. \\
+    $N_3$ & $(1,1,0,0,0)$ & $3 \leq 1$ (F) & -- & -- & -- & Podado por infactibilidad. \\
+    $N_4$ & $(1,0,1,1,0)$ & $-1 \leq 1$ (V) & $-3 \geq 2$ (F) & -- & -- & Podado por infactibilidad. \\
+    $N_5$ & $(0,1,0,1,1)$ & $-1 \leq 1$ (V) & $3 \geq 2$ (V) & $1 \geq 3$ (F) & -- & Podado por infactibilidad. \\
+    $\mathbf{N_6}$ & $\mathbf{(1,1,0,1,1)}$ & $\mathbf{1 \leq 1}$ \textbf{(V)} & $\mathbf{4 \geq 2}$ \textbf{(V)} & $\mathbf{3 \geq 3}$ \textbf{(V)} & $\mathbf{0}$ & \textbf{Factible. Nueva Incumbente Z=0}. \\
+    $N_7$ & $(1,1,1,1,1)$ & $1 \leq 1$ (V) & $1 \geq 2$ (F) & -- & -- & Podado por infactibilidad. \\
+    \bottomrule
+    \end{tabular}}
+    \caption{Tabla de Evaluaciones Clave (Criterio de Balas)}
+\end{table}
+
+\begin{nota}{}
+La suma de coeficientes en C1 obliga prácticamente a que $x_4 = 1$ para compensar valores positivos si se activan $x_1$ o $x_2$. Simultáneamente, C2 exige valores positivos altos, forzando a que $x_3$ se mantenga en 0 (ya que penaliza con -3) y $x_5 = 1$ (aporta +2). La intersección lógica de estas sumas direcciona el árbol directamente hacia $N_6$.
+\end{nota}
+
+\newpage
+\subsection{Construcción del Árbol de Soluciones}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=2.2cm,
+        level 1/.style={sibling distance=7cm},
+        level 2/.style={sibling distance=3.5cm},
+        level 3/.style={sibling distance=2cm},
+        every node/.style={draw, rectangle, rounded corners, align=center, fill=blue!5, inner sep=2mm, thick},
+        edge from parent/.style={draw, -{Latex[length=3mm]}, thick}
+    ]
+    
+    \node (P0) {\textbf{Raíz}\\ Todas libres}
+        child {node (P1) [fill=red!15, draw=red!50!black] {\textbf{Nodo 1}\\ $x_1=1$\\ (Viola C1 o C3)}
+            edge from parent node[left=2mm, draw=none, fill=none] {$x_1=1$}
+        }
+        child {node (P2) {\textbf{Nodo 2}\\ $x_1=0$\\ $Z_{max} \to \text{Incumbente}$}
+            child {node (P3) [fill=gray!15] {\textbf{Nodo 3}\\ $x=(0,1,0,0,0)$\\ $Z = -1$}
+                edge from parent node[left=2mm, draw=none, fill=none] {$x_2=1$}
+            }
+            child {node (P4) {\textbf{Ramas Mixtas}\\ Evaluando $x_4, x_5$}
+                child {node (P5) [fill=green!15, draw=green!50!black, very thick] {\textbf{Nodo 6 (Óptimo)}\\ $x=(1,1,0,1,1)$\\ $\mathbf{Z = 0}$}
+                    edge from parent node[right=2mm, draw=none, fill=none] {Filtro Balas}
+                }
+                edge from parent node[right=2mm, draw=none, fill=none] {$x_1 \to 1, x_2 \to 1$}
+            }
+            edge from parent node[right=2mm, draw=none, fill=none] {$x_1=0$}
+        };
+        
+    \end{tikzpicture}
+    \caption{Esquema Resumido del Árbol de Búsqueda de Balas}
+\end{figure}
+
+\subsection{Solución Óptima}
+
+La evaluación aditiva nos lleva a agotar el espacio de búsqueda podando rápidamente las combinaciones que violan $C_1$ y $C_2$ simultáneamente. 
+La solución óptima del modelo es:
+\[ \mathbf{x_1 = 1, \quad x_2 = 1, \quad x_3 = 0, \quad x_4 = 1, \quad x_5 = 1} \]
+
+Al sustituir estos valores en la función objetivo original obtenemos:
+\[ Z = 3(1) - (1) + 2(0) - (1) - (1) = 3 - 1 - 1 - 1 = \mathbf{0} \]
+
+\textbf{Comprobación final de restricciones con la solución óptima:}
+\begin{itemize}
+    \item \textbf{C1:} $2(1) + 1 - 3(1) + 1 = 1 \leq 1$ \textbf{(Se cumple al límite)}
+    \item \textbf{C2:} $1 + 2(1) - 3(0) - 1 + 2(1) = 4 \geq 2$ \textbf{(Se cumple)}
+    \item \textbf{C3:} $2(1) + 3(1) + 5(0) - 1 - 1 = 3 \geq 3$ \textbf{(Se cumple al límite)}
+\end{itemize}
+
+El método de Balas nos permite concluir que esta combinación binaria es la única forma de equilibrar las fuertes penalizaciones cruzadas entre las tres restricciones.
+
+\end{document}

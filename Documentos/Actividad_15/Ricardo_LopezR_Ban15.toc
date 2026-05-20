@@ -1,0 +1,21 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Resolución por Ramificación y Acotamiento}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Evaluación de Nodos}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Árbol de Ramificación y Acotamiento}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Interpretación}{2}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Modelo B: Programación Entera}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Solución Relajada y Ramificación}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Árbol del Modelo B}{4}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Modelo C: Programación Binaria}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Análisis Lógico de Ramificación Binaria}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Árbol del Modelo C}{6}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Problema del Camión de Mudanza }{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Aplicación de Ramificación y Acotamiento}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Construcción del Árbol de Ramificación}{9}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Obtención de la Solución Óptima}{9}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Interpretación y Análisis de Resultados}{9}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Ejercicio e) Problema del Agente Viajero }{10}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Aplicación de Ramificación y Acotamiento}{10}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Construcción del Árbol de Ramificación}{11}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Obtención de la Solución Óptima}{11}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Interpretación}{11}{subsection.5.4}%

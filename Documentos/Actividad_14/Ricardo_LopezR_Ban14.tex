@@ -1,0 +1,600 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas
+\newtcbtheorem[number within=section]{mytheo}{Teorema}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+    
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textit{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textit{Banderín 14: Métodos de Planos de Corte}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    \rule{\linewidth}{0.5mm}\\[0.3cm]
+    {\Large \textit{Ricardo López Ramírez}}\\
+    \rule{\linewidth}{0.5mm}\\[0.8cm]
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% CONTENIDO 
+\section{Resolución del Modelo de Programación Entera}
+
+\begin{ejercicio}{Formulación Inicial y Escalamiento}{form}
+Se escalar las restricciones para obtener una matriz $A$ 
+puramente entera.
+
+\textbf{Modelo Original:}
+\begin{align*}
+    \max z &= x_1 + 2x_2 \\
+    \text{s.a.} \quad x_1 + \frac{1}{2}x_2 &\leq \frac{3}{4} \\
+    \frac{2}{3}x_1 + 2x_2 &\leq \frac{13}{4} \\
+    x_1, x_2 &\geq 0 \quad \text{y enteras}
+\end{align*}
+
+\textbf{Forma Estándar}
+Multiplicamos la restricción 1 por 4 y la restricción 2 por 12.
+\begin{align*}
+    \max z - x_1 - 2x_2 &= 0 \\
+    4x_1 + 2x_2 + s_1 &= 3 \\
+    8x_1 + 24x_2 + s_2 &= 39 \\
+    x_1, x_2, s_1, s_2 &\geq 0 \quad \text{y enteras}
+\end{align*}
+\end{ejercicio}
+
+\subsection{Solución del Modelo Relajado (Simplex Continuo)}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{x_1}$ & $\mathbf{x_2}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & \textbf{RHS} & \textbf{Cociente} \\
+    \midrule
+    $Z$   & -1 & \textbf{-2} & 0 & 0 & 0 & - \\
+    $s_1$ & 4  & \textbf{2}  & 1 & 0 & 3 & $3/2 = \mathbf{1.5}$ \text{ (Sale)} \\
+    $s_2$ & 8  & 24 & 0 & 1 & 39 & $39/24 = 1.625$ \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Inicial Primal}
+\end{table}
+
+Entra $x_2$ y sale $s_1$. Aplicando Gauss-Jordan (pivote en 2), obtenemos la \textbf{Tabla Óptima Relajada}:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{x_1}$ & $\mathbf{x_2}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & \textbf{RHS} \\
+    \midrule
+    $Z$   & 3 & 0 & 1 & 0 & 3 \\
+    $\mathbf{x_2}$ & \textbf{2} & \textbf{1} & \textbf{1/2} & \textbf{0} & \textbf{3/2} \\
+    $s_2$ & -40 & 0 & -12 & 1 & 3 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Óptima Relajada}
+\end{table}
+
+La solución óptima continua es $x_1 = 0, x_2 = 1.5, Z = 3$. Como $x_2 \notin \mathbb{Z}$, procedemos a aplicar los cortes.
+
+
+\subsection{Aplicación del Método Fraccional de Gomory}
+
+\begin{mytheo}{Corte Fraccional}{frac}
+Tomamos el renglón de la variable básica fraccionaria $x_2$:
+\[ 2x_1 + x_2 + \frac{1}{2}s_1 = \frac{3}{2} \]
+
+Descomponemos en parte entera y fraccionaria ($a = \lfloor a \rfloor + f$):
+\[ (2+0)x_1 + (1+0)x_2 + \left(0 + \frac{1}{2}\right)s_1 = 1 + \frac{1}{2} \]
+
+Agrupamos y generamos el corte fraccional $\sum f_{ij}x_j \geq f_i$:
+\[ \frac{1}{2}s_1 \geq \frac{1}{2} \implies -\frac{1}{2}s_1 + s_3 = -\frac{1}{2} \]
+\end{mytheo}
+
+Agregamos la restricción a la tabla y aplicamos el \textbf{Dual Simplex}:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{x_1}$ & $\mathbf{x_2}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ & \textbf{RHS} \\
+    \midrule
+    $Z$   & 3 & 0 & 1 & 0 & 0 & 3 \\
+    $x_2$ & 2 & 1 & 1/2 & 0 & 0 & 3/2 \\
+    $s_2$ & -40 & 0 & -12 & 1 & 0 & 3 \\
+    $\mathbf{s_3}$ & 0 & 0 & \textbf{-1/2} & 0 & 1 & \textbf{-1/2} \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+Sale $s_3$ por tener RHS negativo. Entra $s_1$ (es el único con coeficiente negativo). El pivote es $-1/2$. Al resolver con Gauss-Jordan obtenemos:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{x_1}$ & $\mathbf{x_2}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ & \textbf{RHS} \\
+    \midrule
+    $Z$   & 3 & 0 & 0 & 0 & 2 & \textbf{2} \\
+    $x_2$ & 2 & 1 & 0 & 0 & 1 & \textbf{1} \\
+    $s_2$ & -40 & 0 & 0 & 1 & -24 & 15 \\
+    $s_1$ & 0 & 0 & 1 & 0 & -2 & 1 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Óptima Entera (Fraccional Gomory)}
+\end{table}
+
+\textbf{Solución Óptima Entera:} $x_1 = 0$, $x_2 = 1$, con $Z = 2$.
+
+
+\subsection{Aplicación del Método Mixto de Gomory}
+
+\begin{mytheo}{Corte Mixto}{mix}
+Supongamos que el modelo indicara que solo $x_1, x_2 \in \mathbb{Z}$, dejando a las holguras $s_1, s_2$ como variables continuas. Evaluamos nuevamente el renglón de $x_2$:
+\[ 2x_1 + x_2 + \frac{1}{2}s_1 = \frac{3}{2} \]
+
+Calculamos $H = \frac{3}{2} - \lfloor \frac{3}{2} \rfloor = \frac{1}{2}$.
+\begin{itemize}
+    \item Para $x_1$ (variable entera): su fracción es $f_1 = 2 - 2 = 0$. Como $f_1 \leq H$, el coeficiente para el corte es $f_1 = 0$.
+    \item Para $s_1$ (variable continua): su coeficiente es $a_{s1} = 1/2$. Como $a_{s1} \geq 0$, usamos el coeficiente directo en el corte: $\frac{1}{2}s_1$.
+\end{itemize}
+El corte mixto resultante es:
+\[ 0 x_1 + \frac{1}{2}s_1 \geq \frac{1}{2} \implies s_1 \geq 1 \]
+\end{mytheo}
+
+\begin{nota}{Equivalencia Algebraica}
+Si sustituimos $s_1 = 3 - 4x_1 - 2x_2$ en el corte mixto obtenido ($s_1 \geq 1$):
+\[ 3 - 4x_1 - 2x_2 \geq 1 \implies 4x_1 + 2x_2 \leq 2 \implies \mathbf{2x_1 + x_2 \leq 1} \]
+Este es exactamente el mismo hiperplano de corte que logramos con el método fraccional.
+\end{nota}
+
+
+\subsection{Aplicación del Método Puro de Gomory}
+
+\begin{alerta}{Condiciones Iniciales del Método Puro de Gomory}
+Como lo indica el PDF\textit{Algoritmo Entero Puro de Gomory} asume que la matriz entera arranca con \textbf{factibilidad dual inicial} (RHS negativo y $Z_j - C_j \geq 0$). 
+Dado que nuestro modelo ya escalado ($4x_1 + 2x_2 \leq 3$) arranca con factibilidad \textit{primal} (RHS positivo), no requiere un inicio en Dual Simplex puro para arrancar. 
+
+(cuando no se arranca desde el Dual Simplex), este converge directamente en el 
+método de corte Fraccional bajo la precondición estricta de que 
+\textbf{todas las variables (incluyendo holguras) 
+sean tratadas como discretas}
+\[ \mathbf{2x_1 + x_2 \leq 1} \]
+\end{alerta}
+
+
+\subsection{Interpretación, Justificación y Gráfica}
+
+La restricción 1 ($x_1 + \frac{1}{2}x_2 \leq \frac{3}{4}$) domina por completo a la restricción 2 dentro del primer cuadrante. 
+
+Al relajar la restricción de integridad, el vértice óptimo es $(0, 1.5)$. 
+al aplicar los planos de corte de Gomory, se reduce la polígona factible eliminando la zona 
+fraccionaria sin afectar a los puntos enteros. 
+El nuevo hiperplano introducido ($2x_1 + x_2 \leq 1$) nos empuja a la 
+verdadera solución entera $(0, 1)$.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=5]
+        
+        \draw[->, thick] (-0.1,0) -- (1.2,0) node[right] {$x_1$};
+        \draw[->, thick] (0,-0.1) -- (0,2) node[above] {$x_2$};
+        
+        
+        \draw[blue, thick] (0, 1.5) -- (0.75, 0) node[midway, above right] {$c_1: x_1 + \frac{1}{2}x_2 \leq \frac{3}{4}$};
+        \draw[red, thick] (0, 1.625) -- (1.1, 1.258);
+        \node[red, right] at (1.1, 1.258) {$c_2: \frac{2}{3}x_1 + 2x_2 \leq \frac{13}{4}$};
+        
+        
+        \fill[blue, opacity=0.1] (0,0) -- (0.75, 0) -- (0, 1.5) -- cycle;
+        
+        
+        \fill[black] (0,0) circle (0.5pt);
+        \fill[black] (0,1) circle (0.6pt);
+        \node[black, right] at (0.02, 1) {\textbf{Óptimo Entero (0, 1)}};
+        
+        
+        \fill[blue] (0,1.5) circle (0.6pt);
+        \node[blue, right] at (0.02, 1.55) {Óptimo Relajado (0, 1.5)};
+        
+        
+        \draw[orange, thick, dashed] (0, 1) -- (0.5, 0);
+        \node[orange, below left] at (0.45, 0.5) {\textbf{Plano de Corte: $2x_1 + x_2 \leq 1$}};
+        
+        
+        \draw[gray!30, dashed, step=0.5] (0,0) grid (1.0, 1.8);
+        \foreach \x in {0.5, 1.0} \node[below, font=\scriptsize] at (\x,0) {\x};
+        \foreach \y in {0.5, 1.0, 1.5} \node[left, font=\scriptsize] at (0,\y) {\y};
+    \end{tikzpicture}
+    \caption{Representación gráfica del Método de Planos de Corte de Gomory}
+\end{figure}
+
+\newpage
+
+\section{Resolución del Modelo de Programación Entera}
+
+\begin{alerta}{Ajuste del Modelo}
+El modelo original presenta la variable $x_3$ en la función objetivo sumando ($+x_3$)
+pero no aparece en las restricciones.
+Esto generaría una solución no acotada ($Z = \infty$). 
+Se  asume un error tipográfico y se resuelve el modelo acotado en $\mathbb{R}^2$.
+\end{alerta}
+
+\begin{ejercicio}{Formulación Estándar}{form}
+Variables de holgura $s_1$ y $s_2$ para convertir las inecuaciones en igualdades.
+\textbf{Modelo Corregido}
+\begin{align*}
+    \max Z - 4x_1 - 3x_2 &= 0 \\
+    \text{s.a.} \quad -x_1 + 3x_2 + s_1 &= 6 \\
+    7x_1 + x_2 + s_2 &= 35 \\
+    x_1, x_2 &\geq 0 \quad \text{y enteras}
+\end{align*}
+\end{ejercicio}
+
+\subsection{Solución del Modelo Relajado (Simplex Continuo)}
+
+Aplicando el método Simplex tradicional, 
+pivoteamos primero sobre $x_1$ y luego sobre $x_2$. 
+\textbf{Tabla Óptima Continua}:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{x_1}$ & $\mathbf{x_2}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & \textbf{RHS} \\
+    \midrule
+    $Z$   & 0 & 0 & 17/22 & 15/22 & \textbf{57/2} (28.5) \\
+    $\mathbf{x_2}$ & \textbf{0} & \textbf{1} & \textbf{7/22} & \textbf{1/22} & \textbf{7/2} (3.5) \\
+    $\mathbf{x_1}$ & \textbf{1} & \textbf{0} & \textbf{-1/22} & \textbf{3/22} & \textbf{9/2} (4.5) \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Óptima Relajada}
+\end{table}
+
+La solución óptima continua es $x_1 = 4.5, x_2 = 3.5$. Al no ser enteros, debemos aplicar planos de corte.
+
+
+\subsection{Aplicación del Método Fraccional de Gomory}
+
+\begin{mytheo}{Corte Fraccional (Fila de $x_2$)}{frac}
+Seleccionamos el renglón de la variable $x_2$ (podríamos usar $x_1$ también, ya que ambas tienen la misma parte fraccionaria $f = 0.5$):
+\[ x_2 + \frac{7}{22}s_1 + \frac{1}{22}s_2 = \frac{7}{2} \]
+
+Descomponemos en parte entera y fraccional ($a = \lfloor a \rfloor + f$):
+\[ (1+0)x_2 + \left(0 + \frac{7}{22}\right)s_1 + \left(0 + \frac{1}{22}\right)s_2 = 3 + \frac{1}{2} \]
+
+Generamos el corte fraccional $\sum f_{ij}x_j \geq f_i$:
+\[ \frac{7}{22}s_1 + \frac{1}{22}s_2 \geq \frac{1}{2} \implies \mathbf{7s_1 + s_2 \geq 11} \]
+\end{mytheo}
+
+\begin{nota}{}
+Si sustituimos las ecuaciones de holgura originales ($s_1 = 6 + x_1 - 3x_2$ y $s_2 = 35 - 7x_1 - x_2$) en el corte $7s_1 + s_2 \geq 11$, obtenemos el hiperplano en el espacio original:
+\[ 7(6 + x_1 - 3x_2) + (35 - 7x_1 - x_2) \geq 11 \implies 77 - 22x_2 \geq 11 \implies \mathbf{x_2 \leq 3} \]
+\end{nota}
+
+
+\subsection{Aplicación del Método Mixto de Gomory}
+
+Aplicando fórmula a la \textbf{fila de $x_1$}, ya que esta fila posee un coeficiente negativo.
+
+\begin{mytheo}{Corte Mixto (Fila de $x_1$)}{mix}
+Renglón base: $x_1 - \frac{1}{22}s_1 + \frac{3}{22}s_2 = 4.5$ \\
+Parte fraccionaria objetivo: $H = 0.5$. \\
+Asumimos que $s_1$ y $s_2$ son continuas. Evaluamos sus coeficientes:
+\begin{itemize}
+    \item Para $s_1$ ($a_1 = -1/22$): Como es \textbf{negativo}, usamos la segunda parte de la fórmula del método mixto: $\left(\frac{H}{H-1}\right) a_1 = \left(\frac{0.5}{0.5-1}\right) \left(-\frac{1}{22}\right) = -1 \left(-\frac{1}{22}\right) = \mathbf{\frac{1}{22}}$
+    \item Para $s_2$ ($a_2 = 3/22$): Como es \textbf{positivo}, pasa directo al corte.
+\end{itemize}
+
+El corte resultante es:
+\[ \frac{1}{22}s_1 + \frac{3}{22}s_2 \geq \frac{1}{2} \implies \mathbf{s_1 + 3s_2 \geq 11} \]
+
+\end{mytheo}
+
+
+\subsection{Aplicación del Método Puro de Gomory}
+
+El Método Entero Puro se basa en iterar los cortes fraccionales usando el Dual Simplex hasta converger. Insertamos nuestro primer corte fraccional (convertido en igualación: $s_3 - \frac{7}{22}s_1 - \frac{1}{22}s_2 = -\frac{1}{2}$) en la tabla continua:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{x_1}$ & $\mathbf{x_2}$ & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ & \textbf{RHS} \\
+    \midrule
+    $Z$   & 0 & 0 & 17/22 & 15/22 & 0 & 57/2 \\
+    $x_2$ & 0 & 1 & 7/22 & 1/22 & 0 & 7/2 \\
+    $x_1$ & 1 & 0 & -1/22 & 3/22 & 0 & 9/2 \\
+    $\mathbf{s_3}$ & \textbf{0} & \textbf{0} & \textbf{-7/22} & \textbf{-1/22} & \textbf{1} & \textbf{-1/2} \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+Sale $s_3$ y entra $s_1$. Tras aplicar Gauss-Jordan, llegamos a una tabla donde $x_2 = 3$ (entero), pero $x_1 = 32/7 = 4.57$ (fraccionario). \textbf{Se requiere un segundo corte.}
+
+Extraemos el corte fraccional puro del nuevo renglón de $x_1$ ($x_1 + 1/7 s_2 + 1/7 s_3 = 32/7$):
+\[ \frac{1}{7}s_2 + \frac{1}{7}s_3 \geq \frac{4}{7} \implies \mathbf{s_4 - \frac{1}{7}s_2 - \frac{1}{7}s_3 = -\frac{4}{7}} \]
+
+Al agregar $s_4$ a la tabla y aplicar el Dual Simplex por segunda vez (sale $s_4$, entra $s_2$), llegamos a la tabla entera final:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c | c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{s_1}$ & $\mathbf{s_2}$ & $\mathbf{s_3}$ & $\mathbf{s_4}$ & \textbf{RHS} \\
+    \midrule
+    $\mathbf{Z}$   & 0 & 0 & * & * & \textbf{25} \\
+    $\mathbf{x_2}$ & 0 & 0 & * & * & \textbf{3} \\
+    $\mathbf{x_1}$ & 0 & 0 & * & * & \textbf{4} \\
+    \bottomrule
+    \end{tabular}
+    \caption{Solución Óptima Entera Pura}
+\end{table}
+\textit{*Se abrevian los coeficientes de las variables de holgura por practicidad visual.}
+
+
+\subsection{Interpretación y Justificación Gráfica}
+
+La solución final del algoritmo nos indica que debemos producir $x_1 = 4$ y $x_2 = 3$, 
+obteniendo una utilidad máxima de $Z = 25$. El primer corte 
+($x_2 \leq 3$) rebana el pico superior del poliedro relajado que contenía al punto fraccional 
+$(4.5, 3.5)$. Esto empujó el óptimo al límite lateral, haciendo a $x_1$ fraccional.
+ El segundo plano de corte fue vital para acotar definitivamente el poliedro hasta el punto 
+ entero puro más cercano factible: $(4,3)$.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=1.5]
+        
+        \draw[gray!20, step=1] (-1,-1) grid (6,5);
+        
+       
+        \draw[->, thick] (-0.5,0) -- (6,0) node[right] {$x_1$};
+        \draw[->, thick] (0,-0.5) -- (0,5) node[above] {$x_2$};
+        
+        
+        \draw[blue, thick] (-1, 1.66) -- (5, 3.66) node[above right] {$-x_1 + 3x_2 \leq 6$};
+        \draw[red, thick] (4.5, 3.5) -- (5, 0) node[below] {$7x_1 + x_2 \leq 35$};
+        \draw[red, thick] (4, 7) -- (4.5, 3.5); 
+        
+        
+        \fill[blue, opacity=0.1] (0,0) -- (5,0) -- (4.5, 3.5) -- (0, 2) -- cycle;
+        
+        
+        \foreach \x in {0,...,5}
+            \foreach \y in {0,...,4} {
+               
+                \pgfmathparse{(-\x + 3*\y <= 6) && (7*\x + \y <= 35) ? 1 : 0}
+                \ifnum\pgfmathresult=1
+                    \fill[black] (\x,\y) circle (1.5pt);
+                \fi
+            }
+        
+       
+        \fill[blue] (4.5, 3.5) circle (2.5pt);
+        \node[blue, right] at (4.6, 3.7) {Óptimo Relajado (4.5, 3.5)};
+        
+        
+        \draw[orange, thick, dashed] (-0.5, 3) -- (5.5, 3);
+        \node[orange, left] at (0, 3.2) {\textbf{Corte 1 ($x_2 \leq 3$)}};
+        
+        
+        \fill[red] (4, 3) circle (3pt);
+        \node[red, below left] at (3.9, 3) {\textbf{Óptimo Entero Puro (4, 3)}};
+        
+        
+        \foreach \x in {1,2,3,4,5} \node[below, font=\scriptsize] at (\x,0) {\x};
+        \foreach \y in {1,2,3,4} \node[left, font=\scriptsize] at (0,\y) {\y};
+    \end{tikzpicture}
+    \caption{Representación del espacio continuo y la convergencia al punto entero (4,3)}
+\end{figure}
+
+\newpage
+
+
+\section{Resolución usando el Método Puro de Gomory}
+
+\begin{ejercicio}{Formulación Estándar para Dual Simplex}{form}
+El algoritmo puro de Gomory: Todas las variables sean enteras y que iniciemos con la matriz cumpliendo 
+las condiciones de optimalidad inicial del Dual Simplex 
+(RHS negativo, vector $C_j$ positivo).
+
+Convertimos el problema de minimización a maximización multiplicando $Z$ por $-1$ (Sea $W = -Z$). Multiplicamos las restricciones ($\geq$) por $-1$ y añadimos las variables de holgura $X_4, X_5, X_6$:
+
+\textbf{Modelo Estándar:}
+\begin{align*}
+    \max W + 2X_1 + 6X_2 + 3X_3 &= 0 \\
+    \text{s.a.} \quad -X_1 - 3X_2 - X_3 + X_4 &= -5 \\
+    -2X_1 - 5X_2 + 3X_3 + X_5 &= -6 \\
+    -2X_1 - 3X_2 - 2X_3 + X_6 &= -4 \\
+    X_i \geq 0 \quad &\text{y enteras } (i=1,\dots,6)
+\end{align*}
+\end{ejercicio}
+
+\subsection{Tabla Inicial y Generación del Primer Corte}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{X_1}$ & $\mathbf{X_2}$ & $\mathbf{X_3}$ & $\mathbf{X_4}$ & $\mathbf{X_5}$ & $\mathbf{X_6}$ & \textbf{RHS} \\
+    \midrule
+    $W$   & 2 & 6 & 3 & 0 & 0 & 0 & 0 \\
+    $X_4$ & -1 & -3 & -1 & 1 & 0 & 0 & -5 \\
+    $\mathbf{X_5}$ & \textbf{-2} & \textbf{-5} & 3 & 0 & 1 & 0 & \textbf{-6} \\
+    $X_6$ & -2 & -3 & -2 & 0 & 0 & 1 & -4 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Inicial (Factibilidad Dual)}
+\end{table}
+
+Elegimos $X_5 = -6$ por ser la variable básica más negativa ($r=2$). Sus elementos negativos son $a_{21} = -2$ y $a_{22} = -5$. Ninguno es $-1$, por lo que procedemos a derivar el corte puro.
+
+\begin{mytheo}{Construcción del Corte Puro}{corte1}
+\textbf{1. Orden Lexicográfico:} Evaluamos los vectores columna para $X_1$ y $X_2$.
+El primer elemento no nulo de $X_1$ es $a_{p1} = 2$.
+El primer elemento no nulo de $X_2$ es $a_{p2} = 6$.
+Como $2 < 6$, el vector $X_1$. Definimos la columna $k=1$, y el elemento pivote temporal es $a_{pk} = 2$.
+
+\textbf{2. Cálculo de $u_j$ e Índice $\lambda$:}
+Calculamos $u_j = \lfloor \frac{a_{pj}}{a_{pk}} \rfloor$ para las columnas con $a_{rj} < 0$:
+\begin{itemize}
+    \item $u_1 = \lfloor \frac{2}{2} \rfloor = 1$
+    \item $u_2 = \lfloor \frac{6}{2} \rfloor = 3$
+\end{itemize}
+El factor de reducción es $\lambda = \max \left\{ \frac{|a_{r1}|}{u_1}, \frac{|a_{r2}|}{u_2} \right\} = \max \left\{ \frac{2}{1}, \frac{5}{3} \right\} = \mathbf{2}$.
+
+\textbf{3. Derivación del Corte:}
+Aplicamos la fórmula $\sum \lfloor \frac{a_{rj}}{\lambda} \rfloor X_j \leq \lfloor \frac{X_{Br}}{\lambda} \rfloor$ sobre la fila de $X_5$:
+\[ \lfloor \frac{-2}{2} \rfloor X_1 + \lfloor \frac{-5}{2} \rfloor X_2 + \lfloor \frac{3}{2} \rfloor X_3 \leq \lfloor \frac{-6}{2} \rfloor \]
+\[ -X_1 - 3X_2 + X_3 \leq -3 \]
+Insertamos la variable de holgura $X_7$: $\mathbf{-X_1 - 3X_2 + X_3 + X_7 = -3}$
+\end{mytheo}
+
+\subsection{Iteración 1: Inserción del Corte}
+
+Añadimos $X_7$ a la tabla. Al aplicar el criterio del Dual Simplex, $X_7$ sale de la base. Para determinar quién entra, calculamos los cocientes:
+$\max \{ \frac{2}{-1}, \frac{6}{-3} \} = \max \{-2, -2\}$. 
+¡Tenemos un empate! Nuevamente, por jerarquía lexicográfica ($2 < 6$), entra $\mathbf{X_1}$. El pivote es $-1$.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{X_1}$ & $\mathbf{X_2}$ & $\mathbf{X_3}$ & $\mathbf{X_4}$ & $\mathbf{X_5}$ & $\mathbf{X_6}$ & $\mathbf{X_7}$ & \textbf{RHS} \\
+    \midrule
+    $W$   & 0 & 0 & 5 & 0 & 0 & 0 & 2 & -6 \\
+    $\mathbf{X_4}$ & \textbf{0} & \textbf{0} & \textbf{-2} & \textbf{1} & \textbf{0} & \textbf{0} & \textbf{-1} & \textbf{-2} \\
+    $X_5$ & 0 & 1 & 1 & 0 & 1 & 0 & -2 & 0 \\
+    $X_6$ & 0 & 3 & -4 & 0 & 0 & 1 & -2 & 2 \\
+    $X_1$ & 1 & 3 & -1 & 0 & 0 & 0 & -1 & 3 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Tras Gauss-Jordan (Pivote -1)}
+\end{table}
+
+\subsection{Iteración 2: Pivote -1}
+
+\begin{nota}{Excepción del Algoritmo Puro}
+En esta nueva tabla, observamos que $X_4 = -2$ (fila $r=1$). Los coeficientes negativos son $a_{13} = -2$ y $a_{17} = -1$.
+Aplicamos la prueba del cociente: $\max \{ \frac{5}{-2}, \frac{2}{-1} \} = -2$. La variable ganadora para entrar es $X_7$.
+Dado que el \textbf{elemento pivote es exactamente -1}, la teoría dicta que aplicamos el método Dual Simplex directo sin necesidad de derivar un nuevo corte, ya que la división entre $-1$ garantiza mantener la matriz entera.
+\end{nota}
+
+Aplicamos Gauss-Jordan con pivote en $X_7$ (fila 1, columna 7).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c c c c c c c | c}
+    \toprule
+    \textbf{Base} & $\mathbf{X_1}$ & $\mathbf{X_2}$ & $\mathbf{X_3}$ & $\mathbf{X_4}$ & $\mathbf{X_5}$ & $\mathbf{X_6}$ & $\mathbf{X_7}$ & \textbf{RHS} \\
+    \midrule
+    $\mathbf{W}$ & 0 & 0 & 1 & 2 & 0 & 0 & 0 & \textbf{-10} \\
+    $X_7$ & 0 & 0 & 2 & -1 & 0 & 0 & 1 & 2 \\
+    $X_5$ & 0 & 1 & 5 & -2 & 1 & 0 & 0 & 4 \\
+    $X_6$ & 0 & 3 & 0 & -2 & 0 & 1 & 0 & 6 \\
+    $\mathbf{X_1}$ & \textbf{1} & \textbf{3} & \textbf{1} & \textbf{-1} & \textbf{0} & \textbf{0} & \textbf{0} & \textbf{5} \\
+    \bottomrule
+    \end{tabular}
+    \caption{Tabla Óptima Entera Pura}
+\end{table}
+
+\subsection{Conclusión}
+Todos los valores del RHS son no negativos ($X_i \geq 0$) y estrictamente enteros, por lo que hemos alcanzado la optimalidad.
+Sustituyendo $W = -10 \implies Z = 10$.
+La solución óptima del modelo es:
+\[ \mathbf{X_1 = 5, \quad X_2 = 0, \quad X_3 = 0, \quad Z = 10} \]
+
+\end{document}

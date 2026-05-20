@@ -1,0 +1,18 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Resolución del Modelo de Programación Entera}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Solución del Modelo Relajado (Simplex Continuo)}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Aplicación del Método Fraccional de Gomory}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Aplicación del Método Mixto de Gomory}{3}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Aplicación del Método Puro de Gomory}{3}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Interpretación, Justificación y Gráfica}{3}{subsection.1.5}%
+\contentsline {section}{\numberline {2}Resolución del Modelo de Programación Entera}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Solución del Modelo Relajado (Simplex Continuo)}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Aplicación del Método Fraccional de Gomory}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Aplicación del Método Mixto de Gomory}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Aplicación del Método Puro de Gomory}{6}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Interpretación y Justificación Gráfica}{6}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Resolución usando el Método Puro de Gomory}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Tabla Inicial y Generación del Primer Corte}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Iteración 1: Inserción del Corte}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Iteración 2: Pivote -1}{9}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Conclusión}{9}{subsection.3.4}%
