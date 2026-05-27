@@ -1,0 +1,251 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{booktabs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage[left=2.54cm, right=2.54cm, top=2.54cm, bottom=2.54cm]{geometry}
+\usepackage{tikz}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{float}
+\tcbset{shield externalize}
+\usetikzlibrary{arrows.meta, positioning, automata, trees}
+\usetikzlibrary{babel}
+\usepackage{hyperref}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% Bloque de Ejercicio
+\newtcbtheorem[number within=section]{ejercicio}{Ejercicio}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=gray!30!black,
+    colback=gray!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{ej}
+
+% Bloque de Teoremas (Usado para Metodología)
+\newtcbtheorem[number within=section]{mytheo}{Metodología}{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=blue!40!black,
+    colback=blue!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    separator sign={.\ },
+    before skip=10pt,
+    after skip=10pt
+}{th}
+
+ % Bloque de Alerta
+\newtcolorbox{alerta}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=red!40!black,
+    colback=red!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+% Bloque de Notas
+\newtcolorbox{nota}[1]{
+    enhanced,
+    sharp corners,
+    boxrule=0pt,
+    leftrule=5pt,
+    colframe=orange!40!black,
+    colback=yellow!5!white,
+    coltitle=white,
+    fonttitle=\bfseries,
+    title=#1,
+    before skip=10pt,
+    after skip=10pt
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\huge \textbf{Universidad Nacional Autónoma de México}}\\[0.3cm]
+    \rule{\linewidth}{2mm}\\[0.3cm]
+    {\large \textbf{Facultad de Estudios Superiores Acatlán}}\\[1cm]
+    
+   
+    \includegraphics[width=6cm]{../../Archivos/Imagenes_Logos/acatlan.png}\\[1cm]
+    
+    {\Large \textbf{Matemáticas Aplicadas y Computación}}\\[1cm]
+    {\huge \textit{Optimización 2}}\\[0.5cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    {\Large \textbf{Método de Ramificación y Acotamiento}}\\[0.1cm]
+    {\large \textit{}}\\[0.3cm]
+    \rule{\linewidth}{0.3mm}\\[0.3cm]
+    
+    \vfill
+    
+    
+ \small
+    Actualización: \today \hfill Página: \thepage
+\end{titlepage}
+
+% ÍNDICE 
+\pagenumbering{roman}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{Introducción}
+El método de \textbf{Ramificación y Acotamiento} es un algoritmo para resolver problemas de Programación Entera (Puro o Mixto). 
+
+
+\begin{nota}{Idea}
+El algoritmo se basa en resolver iterativamente el \textit{modelo relajado} (quitando la restricción de números enteros usando Simplex). Si la solución arroja decimales, se "ramifica" dividiendo el problema original en dos nuevos subproblemas excluyentes para obligar a la variable a tomar un valor entero.
+\end{nota}
+
+\section{Algoritmo}
+
+\begin{mytheo}{Algoritmo}{pasos_ryc}
+Problema de maximización:
+\begin{enumerate}
+    \item \textbf{Resolver el modelo relajado:} Resuelve el problema con Simplex. Si la solución es entera, Es el óptimo. Si no, ve al paso 2.
+    \item \textbf{Ramificación :} Elige una variable $x_i$ que tenga valor fraccionario $v$ (ej. $x_1 = 3.75$). Crea dos subproblemas (nodos hijos):
+    \begin{itemize}
+        \item Subproblema 1: Agrega la restricción $x_i \le \lfloor v \rfloor$ (ej. $x_1 \le 3$).
+        \item Subproblema 2: Agrega la restricción $x_i \ge \lceil v \rceil$ (ej. $x_1 \ge 4$).
+    \end{itemize}
+    \item \textbf{Resolver y Acotar:} Resuelve los subproblemas relajados. El valor de $Z$ de un nodo actúa como una cota superior para todas sus ramas descendentes. 
+    \begin{itemize}
+        \item \textbf{Infactibilidad:} Las restricciones del subproblema no tienen solución.
+        \item \textbf{Integridad:} La solución del subproblema es completamente entera. Si su $Z$ es mejor que la cota actual ($Z_{cota}$), se convierte en nuestra nueva mejor solución.
+        \item \textbf{Cota:} El valor óptimo fraccionario del subproblema es \textit{peor o igual} a la mejor solución entera que ya tenemos ($Z \le Z_{cota}$).
+    \end{itemize}
+    \item \textbf{Iteración:} Repite los pasos 2 a 4 con los nodos vivos hasta que no quede ninguno por explorar.
+\end{enumerate}
+\end{mytheo}
+
+\begin{alerta}{Regla importante}
+Al descender en el árbol (agregar más restricciones), el valor de la función objetivo $Z$ \textbf{nunca mejorará}. En maximización, $Z$ siempre empeorará o se mantendrá igual; esto es lo que permite podar el árbol matemáticamente.
+\end{alerta}
+
+\section{Ejemplo }
+
+\begin{ejercicio}{Maximización de Utilidad}{ej1}
+Resolver el siguiente modelo de programación entera:
+\begin{align*}
+    \text{Max } Z = 5x_1 &+ 4x_2 \\
+    \text{s.a. } \quad x_1 + x_2 &\le 5 \\
+    10x_1 + 6x_2 &\le 45 \\
+    x_1, x_2 &\ge 0 \text{ y enteros}
+\end{align*}
+
+\textbf{Paso 1: Solución del modelo relajado ($P_0$)} \\
+Ignorando la condición de enteros, resolvemos el sistema de ecuaciones de las restricciones activas:
+$10x_1 + 6(5 - x_1) = 45 \implies 4x_1 + 30 = 45 \implies x_1 = 3.75$ \\
+Sustituyendo obtenemos $x_2 = 1.25$. \\
+La función objetivo es $Z = 5(3.75) + 4(1.25) = 23.75$. \\
+Como $x_1$ y $x_2$ son fracciones, elegimos $x_1$ para ramificar.
+
+\vspace{0.3cm}
+\textbf{Paso 2: Ramificación ($P_1$ y $P_2$)} \\
+Dado $x_1 = 3.75$, creamos dos restricciones: $x_1 \le 3$ y $x_1 \ge 4$.
+\begin{itemize}
+    \item \textbf{Para $\mathbf{P_1}$ (agregando $x_1 \le 3$):} 
+    Al resolver, el óptimo se encuentra en $x_1 = 3$. Sustituyendo en las restricciones, $x_2 = 2$.
+    $Z = 5(3) + 4(2) = 23$. ¡Es una solución entera! Nuestra \textbf{Cota Inferior} actual es $Z = 23$. Podamos esta rama por integridad.
+    
+    \item \textbf{Para $\mathbf{P_2}$ (agregando $x_1 \ge 4$):}
+    Al resolver con $x_1 \ge 4$, el máximo se da en $x_1 = 4$.
+    Sustituyendo: $10(4) + 6x_2 \le 45 \implies 6x_2 \le 5 \implies x_2 = 5/6 \approx 0.833$.
+    $Z = 5(4) + 4(5/6) = 23.33$.
+    Como $23.33 > 23$ (nuestra cota), existe la posibilidad matemática de encontrar una solución entera mejor en esta rama, así que debemos ramificar sobre $x_2 = 0.833$.
+\end{itemize}
+
+\textbf{Paso 3: Segunda Ramificación ($P_3$ y $P_4$)} \\
+Dado $x_2 = 0.833$, creamos: $x_2 \le 0$ y $x_2 \ge 1$ heredando la restricción $x_1 \ge 4$.
+\begin{itemize}
+    \item \textbf{Para $\mathbf{P_3}$ (agregando $x_2 \le 0 \implies x_2 = 0$):}
+    $10x_1 + 0 \le 45 \implies x_1 \le 4.5$. Para maximizar, $x_1 = 4.5$.
+    $Z = 5(4.5) + 0 = 22.5$.
+    Como $22.5 \le 23$ (nuestra cota), podamos esta rama por cota. No nos sirve.
+    
+    \item \textbf{Para $\mathbf{P_4}$ (agregando $x_2 \ge 1$):}
+    Tenemos $x_1 \ge 4$ y $x_2 \ge 1$. Evaluando en la restricción principal:
+    $10(4) + 6(1) = 46 \not\le 45$. El modelo es infactible. Podamos esta rama por infactibilidad.
+\end{itemize}
+
+Todos los nodos han sido evaluados o podados. La solución óptima es la mejor cota encontrada: $\mathbf{x_1 = 3, x_2 = 2, Z = 23}$.
+\end{ejercicio}
+
+\newpage
+
+\subsection{Árbol de Solución Gráfico}
+A continuación, se presenta la representación topológica de la solución utilizando \texttt{TikZ}:
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        level distance=2.5cm,
+        level 1/.style={sibling distance=6cm},
+        level 2/.style={sibling distance=3cm},
+        every node/.style = {shape=rectangle, rounded corners, draw, align=center, top color=white, bottom color=blue!10, thick}
+    ]
+      \node {\textbf{$P_0$ (Relajado)}\\$x_1=3.75, x_2=1.25$\\$Z=23.75$}
+        child { node {\textbf{$P_1$}\\$x_1=3, x_2=2$\\$Z=23$\\ \textcolor{green!60!black}{\textbf{(¡Óptimo Entero!)}}} 
+            edge from parent node[left, xshift=-0.2cm] {$x_1 \le 3$}
+        }
+        child { node {\textbf{$P_2$}\\$x_1=4, x_2=0.833$\\$Z=23.33$}
+          child { node {\textbf{$P_3$}\\$x_1=4.5, x_2=0$\\$Z=22.5$\\ \textcolor{red}{\textbf{(Podado por Cota)}}} 
+              edge from parent node[left, xshift=-0.1cm] {$x_2 \le 0$}
+          }
+          child { node {\textbf{$P_4$}\\Infactible\\ \textcolor{red}{\textbf{(Podado por Infact.)}}} 
+              edge from parent node[right, xshift=0.1cm] {$x_2 \ge 1$}
+          }
+          edge from parent node[right, xshift=0.2cm] {$x_1 \ge 4$}
+        };
+    \end{tikzpicture}
+    \caption{Árbol de Ramificación y Acotamiento para el Ejercicio \ref{ej:ej1}}
+\end{figure}
+
+
+
+\end{document}
