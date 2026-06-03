@@ -175,9 +175,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ──────────────────────────────────────────────
-# MODELO / ALGORITMO
 
+# ALGORITMO
+# ──────────────────────────────────────────────
 
 class Node:
     def __init__(self, id, bounds, parent_id=None, branch_desc="Ninguna", depth=0):
@@ -252,7 +252,7 @@ def branch_and_bound(c, A, b, senses, var_types, is_max):
             continue
 
         current.z = z
-        current.x = np.round(x, 6)
+        current.x = np.round(x, 6) + 0.0  # elimina -0.0
         log_entry["z"] = z
         log_entry["x"] = list(np.round(x, 4))
 
@@ -275,7 +275,7 @@ def branch_and_bound(c, A, b, senses, var_types, is_max):
         if is_int:
             current.status = "Solucion Entera"
             best_z = z
-            best_x = current.x.copy()
+            best_x = current.x.copy() + 0.0  # elimina -0.0
             log_entry["estado"] = "Solucion Entera Optima"
             iteration_log.append(log_entry)
         else:
@@ -310,10 +310,9 @@ def branch_and_bound(c, A, b, senses, var_types, is_max):
     nodes.sort(key=lambda n: n.id)
     return nodes, best_z, best_x, iteration_log
 
-# Problema Mochila
 
 def knapsack_bb(items, capacity):
-  
+   
     n = len(items)
     
     ratios = sorted(range(n), key=lambda i: items[i]["value"]/items[i]["weight"] if items[i]["weight"] else 0, reverse=True)
@@ -370,7 +369,6 @@ def knapsack_bb(items, capacity):
     bb(0, 0, 0, [])
     return best_val, best_sel, tree, ilog
 
-# Regiones factibles 
 
 def find_feasible_corners(c, A, b, senses):
     lines_A = [row[:] for row in A] + [[1,0],[0,1],[-1,0],[0,-1]]
@@ -381,7 +379,7 @@ def find_feasible_corners(c, A, b, senses):
             Am = np.array([lines_A[i], lines_A[j]])
             bv = np.array([lines_b[i], lines_b[j]])
             x  = np.linalg.solve(Am, bv)
-            x  = np.round(x, 6)
+            x  = np.round(x, 6) + 0.0  # elimina -0.0
             if x[0] < -1e-5 or x[1] < -1e-5: continue
             ok = True
             for k in range(len(A)):
@@ -395,9 +393,6 @@ def find_feasible_corners(c, A, b, senses):
             pass
     return corners
 
-
-# ──────────────────────────────────────────────
-# COMPONENTES DE VISUALIZACIÓN
 
 
 def _assign_positions(nodes):
@@ -456,7 +451,7 @@ def build_tree_figure(nodes, num_vars, title="Arbol de Ramificacion"):
 
     BOX_W, BOX_H = 1.9, 0.85
 
-    
+   
     for n in nodes:
         if n.parent_id is not None and n.parent_id in pos and n.id in pos:
             px, py = pos[n.parent_id]
@@ -503,7 +498,7 @@ def build_tree_figure(nodes, num_vars, title="Arbol de Ramificacion"):
                 multialignment="center",
                 fontfamily="monospace")
 
-    
+   
     if pos:
         xs = [p[0] for p in pos.values()]
         ys = [p[1] for p in pos.values()]
@@ -576,7 +571,7 @@ def plot_2d(c, A, b, senses, nodes, best_x, is_max, var_types):
     ax.grid(True, alpha=0.25, linestyle='--')
     ax.spines[['top','right']].set_visible(False)
 
-    
+   
     ax2 = axes[1]
     ax2.set_facecolor('#f8f7f4')
     ax2.axis('off')
@@ -623,15 +618,12 @@ def plot_2d(c, A, b, senses, nodes, best_x, is_max, var_types):
 
 
 
-# SIDEBAR — Configuración
-
-
 with st.sidebar:
     st.markdown("## Configuracion del Modelo")
 
     model_type = st.selectbox(
         "Tipo de Modelo",
-        ["Entero Puro ", "Mixto ", "Binario ", "Mochila "]
+        ["Entero Puro ", "Mixto ", "Binario ", "Mochila"]
     )
     is_knapsack = model_type == "Mochila (Knapsack)"
 
@@ -652,9 +644,9 @@ with st.sidebar:
         st.markdown("### Tipos de Variables")
         var_types = []
         cols_t = st.columns(num_vars)
-        if model_type == "Entero Puro ":
+        if model_type == "Entero Puro":
             default_type = "Entera"
-        elif model_type == "Binario ":
+        elif model_type == "Binario":
             default_type = "Binaria"
         else:
             default_type = "Entera"
@@ -698,9 +690,6 @@ with st.sidebar:
     solve_btn = st.button("Resolver Modelo", type="primary", use_container_width=True)
 
 
-# ──────────────────────────────────────────────
-# AREA PRINCIPAL
-# ──────────────────────────────────────────────
 
 st.markdown("# Ramificacion y Acotamiento")
 st.markdown(
@@ -712,7 +701,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ── Formulacion del modelo ───────────────────
+
 with st.expander("Ver Formulacion del Modelo", expanded=False):
     if not is_knapsack:
         fo_terms = " + ".join([f"{c[i]}*x{i+1}" for i in range(num_vars)])
@@ -741,7 +730,7 @@ if solve_btn:
         else:
             best_z, best_sel, knap_tree, ilog = knapsack_bb(items, capacity)
 
-    # ── Resultado ─────────────────────────────
+    
     if not is_knapsack:
         if best_x is not None:
             vars_str = "  |  ".join([f"x{i+1} = {best_x[i]:.4f}" for i in range(num_vars)])
@@ -771,6 +760,7 @@ if solve_btn:
 
     st.markdown("---")
 
+   
     LEGEND_HTML = """
     <div style='display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;'>
       <span style='background:#e3f2fd;border:1px solid #1565c0;padding:3px 12px;border-radius:4px;font-size:12px;'>Ramificado</span>
@@ -791,7 +781,7 @@ if solve_btn:
             return [""]*len(row)
         st.dataframe(df.style.apply(color_row, axis=1), use_container_width=True, hide_index=True)
 
-    # ── RAMA: modelos normales (PIP / MIP / BIP) ──────────────────────────
+    
     if not is_knapsack:
         tab1, tab2, tab3, tab4, tab5 = st.tabs([
             "Arbol de Ramificacion",
@@ -915,7 +905,7 @@ if solve_btn:
             ax_bar.grid(True, axis='y', alpha=0.25, linestyle='--')
             st.pyplot(fig_bar, use_container_width=True)
 
-    
+    # Mochila 
     else:
         tab1, tab3, tab4, tab5 = st.tabs([
             "Arbol de Ramificacion",
@@ -924,7 +914,7 @@ if solve_btn:
             "Analisis de Cotas",
         ])
 
-        
+        # TAB 1 — Arbol 
         with tab1:
             st.markdown("<div class='section-header'>Arbol de Ramificacion y Acotamiento — Mochila</div>", unsafe_allow_html=True)
             st.markdown(LEGEND_HTML, unsafe_allow_html=True)
@@ -1017,7 +1007,7 @@ if solve_btn:
             st.pyplot(fig_k, use_container_width=True)
             plt.close(fig_k)
 
-            
+            # Tabla de cocientes c_j/a_j
             st.markdown("---")
             st.markdown("**Cocientes c_j / a_j (criterio de ordenamiento por Inspeccion)**")
             ratios_data = []
@@ -1036,7 +1026,7 @@ if solve_btn:
                 return [""]*len(row)
             st.dataframe(ratios_df.style.apply(color_sel, axis=1), use_container_width=True, hide_index=True)
 
-        
+        # TAB 3 — Tabla de subproblemas knapsack
         with tab3:
             st.markdown("<div class='section-header'>Tabla de Subproblemas — Mochila</div>", unsafe_allow_html=True)
             fo_knap = "Max Z = " + " + ".join([f"{it['value']}*{it['name']}" for it in items])
@@ -1063,7 +1053,7 @@ if solve_btn:
                 })
             render_color_table(rows_k, list(rows_k[0].keys()) if rows_k else [])
 
-        
+        # TAB 4 — Iteraciones knapsack
         with tab4:
             st.markdown("<div class='section-header'>Iteraciones Paso a Paso — Mochila</div>", unsafe_allow_html=True)
             for entry in knap_tree:
@@ -1096,7 +1086,7 @@ if solve_btn:
                 </div>
                 """, unsafe_allow_html=True)
 
-        
+        # TAB 5 — Analisis de cotas knapsack
         with tab5:
             st.markdown("<div class='section-header'>Analisis de Cotas — Evolucion del Algoritmo</div>", unsafe_allow_html=True)
 
@@ -1149,7 +1139,7 @@ if solve_btn:
             ax_bk.grid(True, axis='y', alpha=0.25, linestyle='--')
             st.pyplot(fig_bk, use_container_width=True)
 
-   
+  
     if not is_knapsack and best_x is not None:
         st.markdown("---")
         pdf_imgs = []
@@ -1188,7 +1178,7 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    # Referencia teorica
+    
     with st.expander("Referencia: Notacion y Formulas del Metodo"):
         col_r1, col_r2 = st.columns(2)
         with col_r1:
@@ -1223,7 +1213,7 @@ else:
 - Maximizacion: descartar si Z_cota >= Z
 - Minimizacion: descartar si Z_cota <= Z
 
-**Mochila**
+**Mochila (Knapsack)**
 
 - F.O.: max z = c1*x1 + ... + cn*xn
 - Restriccion: a1*x1 + ... + an*xn <= W
