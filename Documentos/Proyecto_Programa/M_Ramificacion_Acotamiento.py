@@ -174,11 +174,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
-
-# ALGORITMO
-# ──────────────────────────────────────────────
-
 class Node:
     def __init__(self, id, bounds, parent_id=None, branch_desc="Ninguna", depth=0):
         self.id          = id
@@ -311,6 +306,7 @@ def branch_and_bound(c, A, b, senses, var_types, is_max):
     return nodes, best_z, best_x, iteration_log
 
 
+
 def knapsack_bb(items, capacity):
    
     n = len(items)
@@ -370,6 +366,7 @@ def knapsack_bb(items, capacity):
     return best_val, best_sel, tree, ilog
 
 
+
 def find_feasible_corners(c, A, b, senses):
     lines_A = [row[:] for row in A] + [[1,0],[0,1],[-1,0],[0,-1]]
     lines_b = list(b)              + [0,   0,   0,    0   ]
@@ -395,9 +392,8 @@ def find_feasible_corners(c, A, b, senses):
 
 
 
-def _assign_positions(nodes):
+def _assign_positions(nodes, h_gap=3.2, v_gap=2.8):
     
-    id_map = {n.id: n for n in nodes}
     children = {n.id: [] for n in nodes}
     for n in nodes:
         if n.parent_id is not None:
@@ -418,13 +414,33 @@ def _assign_positions(nodes):
     for nid, lv in levels.items():
         level_nodes.setdefault(lv, []).append(nid)
 
+    
+    max_in_level = max(len(v) for v in level_nodes.values())
+    gap = max(h_gap, h_gap * (max_in_level / 4))
+
     pos = {}
     for lv, nids in level_nodes.items():
+        n_nodes = len(nids)
         for k, nid in enumerate(nids):
-            x = (k - (len(nids)-1)/2.0) * 2.2
-            y = -(lv * 2.0)
+            x = (k - (n_nodes - 1) / 2.0) * gap
+            y = -(lv * v_gap)
             pos[nid] = (x, y)
     return pos, children, max_level
+
+
+def _build_node_lines(n, num_vars, max_vars_per_row=3):
+    
+    lines = [f"Nodo {n.id}"]
+    if n.id != 0 and n.branch_desc:
+        lines.append(f"[{n.branch_desc}]")
+    if n.z is not None:
+        lines.append(f"Z = {n.z:.3f}")
+        # Partir variables en filas de max_vars_per_row
+        xparts = [f"x{i+1}={n.x[i]:.2f}" for i in range(num_vars)]
+        for start in range(0, len(xparts), max_vars_per_row):
+            lines.append("  ".join(xparts[start:start + max_vars_per_row]))
+    lines.append(n.status)
+    return lines
 
 
 def build_tree_figure(nodes, num_vars, title="Arbol de Ramificacion"):
@@ -436,37 +452,49 @@ def build_tree_figure(nodes, num_vars, title="Arbol de Ramificacion"):
         "Ramificado":      ("#e3f2fd", "#1565c0"),
         "No resuelto":     ("#fafafa", "#757575"),
     }
-    id_map = {n.id: n for n in nodes}
-    pos, children, max_level = _assign_positions(nodes)
+
+    # Parametros adaptativos segun numero de variables
+    VARS_PER_ROW = 3 if num_vars <= 6 else 4
+    FONT_SZ      = max(5.0, 7.5 - num_vars * 0.3)
+    
+    extra_rows   = math.ceil(num_vars / VARS_PER_ROW)
+    BOX_H = 0.55 + extra_rows * 0.28
+    BOX_W = max(2.2, VARS_PER_ROW * 0.72)
 
     
-    all_x = [p[0] for p in pos.values()]
-    width  = max(10, (max(all_x) - min(all_x) + 2.5) * 1.1)
-    height = max(5,  (max_level + 1) * 2.4)
+    H_GAP = BOX_W * 1.25
+    V_GAP = BOX_H * 3.2
 
-    fig, ax = plt.subplots(figsize=(width, height), facecolor="#f8f7f4")
+    pos, children, max_level = _assign_positions(nodes, h_gap=H_GAP, v_gap=V_GAP)
+
+  
+    all_x = [p[0] for p in pos.values()]
+    all_y = [p[1] for p in pos.values()]
+    canvas_w = max(12, (max(all_x) - min(all_x) + BOX_W * 3))
+    canvas_h = max(6,  (max(all_y) - min(all_y) + BOX_H * 4))
+
+    fig, ax = plt.subplots(figsize=(canvas_w, canvas_h), facecolor="#f8f7f4")
     ax.set_facecolor("#f8f7f4")
     ax.axis("off")
-    ax.set_aspect("equal")
 
-    BOX_W, BOX_H = 1.9, 0.85
-
-   
+    
     for n in nodes:
         if n.parent_id is not None and n.parent_id in pos and n.id in pos:
             px, py = pos[n.parent_id]
             cx, cy = pos[n.id]
             ax.annotate("",
-                xy=(cx, cy + BOX_H/2),
-                xytext=(px, py - BOX_H/2),
-                arrowprops=dict(arrowstyle="-|>", color="#999999",
-                                lw=1.2, mutation_scale=10))
-            
+                xy=(cx, cy + BOX_H / 2),
+                xytext=(px, py - BOX_H / 2),
+                arrowprops=dict(arrowstyle="-|>", color="#aaaaaa",
+                                lw=1.0, mutation_scale=9),
+                zorder=1)
             mx = (px + cx) / 2
-            my = (py + cy) / 2
-            ax.text(mx, my, n.branch_desc, fontsize=6.5, ha="center", va="center",
-                    color="#2d3561",
-                    bbox=dict(boxstyle="round,pad=0.15", fc="#ffffff", ec="#cccccc", lw=0.6))
+            my = (py + cy) / 2 + 0.05
+            ax.text(mx, my, n.branch_desc,
+                    fontsize=max(5.5, FONT_SZ - 0.5),
+                    ha="center", va="center", color="#2d3561", zorder=2,
+                    bbox=dict(boxstyle="round,pad=0.12", fc="#ffffff",
+                              ec="#cccccc", lw=0.5))
 
     
     for n in nodes:
@@ -475,38 +503,29 @@ def build_tree_figure(nodes, num_vars, title="Arbol de Ramificacion"):
         x, y = pos[n.id]
         fc, ec = STATUS_COLORS.get(n.status, ("#fafafa", "#757575"))
 
-        
-        box = FancyBboxPatch((x - BOX_W/2, y - BOX_H/2), BOX_W, BOX_H,
-                             boxstyle="round,pad=0.05",
-                             linewidth=1.5, edgecolor=ec, facecolor=fc,
-                             zorder=3)
+        box = FancyBboxPatch(
+            (x - BOX_W / 2, y - BOX_H / 2), BOX_W, BOX_H,
+            boxstyle="round,pad=0.04",
+            linewidth=1.5, edgecolor=ec, facecolor=fc, zorder=3)
         ax.add_patch(box)
 
-        
-        lines = [f"Nodo {n.id}"]
-        if n.id != 0 and n.branch_desc:
-            lines.append(f"[{n.branch_desc}]")
-        if n.z is not None:
-            lines.append(f"Z = {n.z:.3f}")
-            xvals = "  ".join([f"x{i+1}={n.x[i]:.2f}" for i in range(num_vars)])
-            lines.append(xvals)
-        lines.append(n.status)
-
+        lines = _build_node_lines(n, num_vars, VARS_PER_ROW)
         txt = "\n".join(lines)
-        ax.text(x, y, txt, fontsize=6.5, ha="center", va="center",
+        ax.text(x, y, txt,
+                fontsize=FONT_SZ, ha="center", va="center",
                 color="#1a1a2e", zorder=4,
                 multialignment="center",
-                fontfamily="monospace")
+                fontfamily="monospace",
+                linespacing=1.35)
 
    
-    if pos:
-        xs = [p[0] for p in pos.values()]
-        ys = [p[1] for p in pos.values()]
-        ax.set_xlim(min(xs) - BOX_W, max(xs) + BOX_W)
-        ax.set_ylim(min(ys) - BOX_H*1.5, max(ys) + BOX_H*1.5)
+    xs = [p[0] for p in pos.values()]
+    ys = [p[1] for p in pos.values()]
+    ax.set_xlim(min(xs) - BOX_W * 1.2, max(xs) + BOX_W * 1.2)
+    ax.set_ylim(min(ys) - BOX_H * 2,   max(ys) + BOX_H * 2)
 
     ax.set_title(title, fontsize=11, fontweight="bold", color="#1a1a2e", pad=10)
-    fig.tight_layout(pad=1)
+    fig.tight_layout(pad=1.5)
     return fig
 
 
@@ -571,7 +590,7 @@ def plot_2d(c, A, b, senses, nodes, best_x, is_max, var_types):
     ax.grid(True, alpha=0.25, linestyle='--')
     ax.spines[['top','right']].set_visible(False)
 
-   
+  
     ax2 = axes[1]
     ax2.set_facecolor('#f8f7f4')
     ax2.axis('off')
@@ -618,12 +637,13 @@ def plot_2d(c, A, b, senses, nodes, best_x, is_max, var_types):
 
 
 
+
 with st.sidebar:
     st.markdown("## Configuracion del Modelo")
 
     model_type = st.selectbox(
         "Tipo de Modelo",
-        ["Entero Puro ", "Mixto ", "Binario ", "Mochila"]
+        ["Entero Puro ", "Mixto", "Binario", "Mochila"]
     )
     is_knapsack = model_type == "Mochila (Knapsack)"
 
@@ -644,9 +664,9 @@ with st.sidebar:
         st.markdown("### Tipos de Variables")
         var_types = []
         cols_t = st.columns(num_vars)
-        if model_type == "Entero Puro":
+        if model_type == "Entero Puro (PIP)":
             default_type = "Entera"
-        elif model_type == "Binario":
+        elif model_type == "Binario (BIP)":
             default_type = "Binaria"
         else:
             default_type = "Entera"
@@ -690,7 +710,6 @@ with st.sidebar:
     solve_btn = st.button("Resolver Modelo", type="primary", use_container_width=True)
 
 
-
 st.markdown("# Ramificacion y Acotamiento")
 st.markdown(
     f"<div class='section-header'>"
@@ -730,7 +749,7 @@ if solve_btn:
         else:
             best_z, best_sel, knap_tree, ilog = knapsack_bb(items, capacity)
 
-    
+   
     if not is_knapsack:
         if best_x is not None:
             vars_str = "  |  ".join([f"x{i+1} = {best_x[i]:.4f}" for i in range(num_vars)])
@@ -760,7 +779,7 @@ if solve_btn:
 
     st.markdown("---")
 
-   
+    
     LEGEND_HTML = """
     <div style='display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;'>
       <span style='background:#e3f2fd;border:1px solid #1565c0;padding:3px 12px;border-radius:4px;font-size:12px;'>Ramificado</span>
@@ -781,7 +800,7 @@ if solve_btn:
             return [""]*len(row)
         st.dataframe(df.style.apply(color_row, axis=1), use_container_width=True, hide_index=True)
 
-    
+    # modelos normales
     if not is_knapsack:
         tab1, tab2, tab3, tab4, tab5 = st.tabs([
             "Arbol de Ramificacion",
@@ -905,7 +924,7 @@ if solve_btn:
             ax_bar.grid(True, axis='y', alpha=0.25, linestyle='--')
             st.pyplot(fig_bar, use_container_width=True)
 
-    # Mochila 
+    # Mochila
     else:
         tab1, tab3, tab4, tab5 = st.tabs([
             "Arbol de Ramificacion",
@@ -914,7 +933,7 @@ if solve_btn:
             "Analisis de Cotas",
         ])
 
-        # TAB 1 — Arbol 
+        
         with tab1:
             st.markdown("<div class='section-header'>Arbol de Ramificacion y Acotamiento — Mochila</div>", unsafe_allow_html=True)
             st.markdown(LEGEND_HTML, unsafe_allow_html=True)
@@ -930,7 +949,7 @@ if solve_btn:
                 if entry["status"] == "Ramificado":
                     parent_stack.append(entry["id"])
 
-            
+           
             STATUS_K = {
                 "Solucion Entera": ("#e8f5e9","#388e3c"),
                 "Agotado":         ("#f5f5f5","#9e9e9e"),
@@ -951,14 +970,14 @@ if solve_btn:
                 sel = [items[i]["name"] for i in entry["included"]] if entry["included"] else ["ninguno"]
                 kn.z  = entry["curr_val"]
                 kn.x  = None
-                
+                # Reutilizar campo branch_desc para la etiqueta de arista
                 if entry["_parent"] is not None:
                     par = id_map[entry["_parent"]]
                     new_its = set(entry["included"]) - set(par["included"])
                     kn.branch_desc = f"+{items[list(new_its)[0]]['name']}" if new_its else "excluir"
                 knodes.append(kn)
 
-            
+            # Generar figura con renderer propio knapsack
             BOX_W_K, BOX_H_K = 2.2, 1.0
             pos_k, children_k, max_lv_k = _assign_positions(knodes)
             all_x_k = [p[0] for p in pos_k.values()]
@@ -1139,7 +1158,7 @@ if solve_btn:
             ax_bk.grid(True, axis='y', alpha=0.25, linestyle='--')
             st.pyplot(fig_bk, use_container_width=True)
 
-  
+    # ── Descarga PDF ─────────────────────────
     if not is_knapsack and best_x is not None:
         st.markdown("---")
         pdf_imgs = []
